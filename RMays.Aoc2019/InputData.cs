@@ -113,5 +113,8 @@ namespace RMays.Aoc2019
 101893
 55611";
         #endregion
+        #region Day2
+        public const string Day2 = @"";
+        #endregion
     }
 }

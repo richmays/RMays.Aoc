@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Coords.cs" />
     <Compile Include="DataPredictor.cs" />
+    <Compile Include="IDay.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
