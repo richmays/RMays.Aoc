@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using RMays.Aoc;
-using RMays.Aoc2019;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +9,19 @@ using System.Threading.Tasks;
 namespace RMays.Aoc2019.Tests
 {
     [TestFixture]
-    public class Day1Tests
+    public class Day2Tests
     {
-        private string inputData = InputData.Day1;
-        private string knownOutputA = "3397667";
-        private string knownOutputB = "5093620";
+        private string inputData = InputData.Day2;
+        private string knownOutputA = "123";
+        private string knownOutputB = "456";
 
         private IDay<long> GetDayObject()
         {
-            return new Day1();
+            return new Day2();
         }
 
         [Test]
-        [TestCase("12", 2)]
-        [TestCase("14", 2)]
-        [TestCase("1969", 654)]
-        [TestCase("100756", 33583)]
+        [TestCase("1, 2, 3", 123)]
         public void PartATests(string input, int expectedOutput)
         {
             var day = GetDayObject();
@@ -34,9 +30,8 @@ namespace RMays.Aoc2019.Tests
         }
 
         [Test]
-        [TestCase("14", 2)]
-        [TestCase("1969", 966)]
-        [TestCase("100756", 50346)]
+        [TestCase("4, 5, 6", 456)]
+
         public void PartBTests(string input, int expectedOutput)
         {
             var day = GetDayObject();
