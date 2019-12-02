@@ -12,8 +12,8 @@ namespace RMays.Aoc2019.Tests
     public class Day2Tests
     {
         private string inputData = InputData.Day2;
-        private string knownOutputA = "123";
-        private string knownOutputB = "456";
+        private string knownOutputA = "5482655";
+        private string knownOutputB = "4967";
 
         private IDay<long> GetDayObject()
         {
@@ -21,14 +21,19 @@ namespace RMays.Aoc2019.Tests
         }
 
         [Test]
-        [TestCase("1, 2, 3", 123)]
-        public void PartATests(string input, int expectedOutput)
+        [TestCase("1,9,10,3,2,3,11,0,99,30,40,50", 3500)]
+        [TestCase("1,0,0,0,99", 2)]
+        [TestCase("2,3,0,3,99", 2)] // 6)]
+        [TestCase("2,4,4,5,99,0", 2)] // 9801)]
+        [TestCase("1,1,1,4,99,5,6,0,99", 30)]
+        public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
             var result = day.SolveA(input);
             Assert.AreEqual(expectedOutput, result);
         }
 
+        [Ignore("Don't need to run B tests.")]
         [Test]
         [TestCase("4, 5, 6", 456)]
 
@@ -43,7 +48,7 @@ namespace RMays.Aoc2019.Tests
         public void DoItA() // ?
         {
             var day = GetDayObject();
-            Console.WriteLine(day.SolveA(inputData));
+            Console.WriteLine(day.SolveA(InputData.Day2_A));
         }
 
         [Test]
@@ -57,7 +62,7 @@ namespace RMays.Aoc2019.Tests
         public void DoItA_Answer()
         {
             var day = GetDayObject();
-            var result = day.SolveA(inputData);
+            var result = day.SolveA(InputData.Day2_A);
             Assert.AreEqual(knownOutputA, result.ToString());
         }
 
