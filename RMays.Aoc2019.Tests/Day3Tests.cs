@@ -13,7 +13,7 @@ namespace RMays.Aoc2019.Tests
     {
         private string inputData = InputData.Day3;
         private string knownOutputA = "446";
-        private string knownOutputB = "9006"; // took WAY too long to code the solution because i used 'abs(...)' in the wrong places.
+        private string knownOutputB = "9006";
 
         private IDay<long> GetDayObject()
         {
@@ -41,7 +41,6 @@ U7,R6,D4,L4", 30)]
 U62,R66,U55,R34,D71,R55,D58,R83", 610)]
         [TestCase(@"R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
 U98,R91,D20,R16,D67,R40,U7,R15,U6,R7", 410)]
-
         public void PartBTests(string input, int expectedOutput)
         {
             var day = GetDayObject();
