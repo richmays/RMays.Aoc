@@ -74,7 +74,6 @@ namespace RMays.Aoc2019
                     }
                     catch
                     {
-                        int dummy2 = 999;
                         throw new InvalidOperationException();
                     }
                 }
@@ -135,7 +134,6 @@ namespace RMays.Aoc2019
                     }
                     catch
                     {
-                        int dummy3 = 981;
                         throw new InvalidOperationException();
                     }
                 }
