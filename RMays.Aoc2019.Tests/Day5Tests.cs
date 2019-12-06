@@ -13,20 +13,11 @@ namespace RMays.Aoc2019.Tests
     {
         private string inputData = InputData.Day5;
         private string knownOutputA = "13547311";
-        private string knownOutputB = "456";
+        private string knownOutputB = "236453";
 
         private IDay<long> GetDayObject()
         {
             return new Day5();
-        }
-
-        [Test]
-        [TestCase("1, 2, 3", 123)]
-        public void PartATests(string input, int expectedOutput)
-        {
-            var day = GetDayObject();
-            var result = day.SolveA(input);
-            Assert.AreEqual(expectedOutput, result);
         }
 
         [Test]
