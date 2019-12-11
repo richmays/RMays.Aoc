@@ -16,18 +16,20 @@ namespace RMays.Aoc2019
             return result.Detected;
         }
 
+        public bool[,] Grid;
+
         public AsteroidDetectorResult Solve(string input)
         {
             var myList = Parser.TokenizeLines(input);
             var rows = myList.Count();
             var cols = myList[0].Length;
-            var grid = new bool[rows, cols];
+            Grid = new bool[rows, cols];
             for(int r = 0; r < rows; r++)
             {
                 var currRow = myList[r];
                 for(int c = 0; c < cols; c++)
                 {
-                    grid[r, c] = (currRow[c] == '#');
+                    Grid[r, c] = (currRow[c] == '#');
                 }
             }
 
@@ -39,8 +41,8 @@ namespace RMays.Aoc2019
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    if (!grid[r, c]) continue;
-                    var cellDetected = GetDetected(grid, r, c);
+                    if (!Grid[r, c]) continue;
+                    var cellDetected = GetDetected(Grid, r, c);
                     Log($"({r},{c}) detected: {cellDetected}");
                     gridDetected[r, c] = cellDetected;
                     if (cellDetected > bestDetected)
@@ -51,7 +53,6 @@ namespace RMays.Aoc2019
                     }
                 }
             }
-
 
             return new AsteroidDetectorResult { BestX = bestX, BestY = bestY, Detected = bestDetected };
         }
@@ -75,28 +76,6 @@ namespace RMays.Aoc2019
             }
             return count;
         }
-
-        /*
-        private bool CanSee(bool[,] grid, int startRow, int startCol, int endRow, int endCol)
-        {
-            int rowDiff = endRow - startRow;
-            int colDiff = endCol - startCol;
-            for(int div = 1; div < 10; div++) // 10 is too high.  Get the max somehow.
-            {
-                if (rowDiff % div != 0 || colDiff % div != 0) continue;
-
-                int fact = 1;
-                while(div * fact < )
-                // Check the cell that intercepts.
-                if (grid[startRow + (rowDiff / div), startCol + (colDiff / div)])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        */
 
         private bool CanSee(bool[,] grid, int startRow, int startCol, int endRow, int endCol)
         {
@@ -136,16 +115,153 @@ namespace RMays.Aoc2019
 
         public long SolveB(string input)
         {
-            var myList = Parser.Tokenize(input);
-      
+            var result = Solve(input);
+            var Asteroids = new List<AsteroidInfo>();
 
-            return 456;
+            for (int c = 0; c < Grid.GetLength(0); c++)
+            { 
+                for (int r = 0; r < Grid.GetLength(1); r++)
+                {
+                    if (Grid[c,r])
+                    {
+                        Asteroids.Add(new AsteroidInfo { Row = r, Col = c, DeltaCol = c - result.BestY, DeltaRow = r - result.BestX });
+                    }
+                }
+            }
+
+            // Let's put them in a big master list.  We'll skip asteroids that are blocked.
+
+            // Now let's shoot some asteroids.
+
+
+            //var AsteroidsShot = new List<AsteroidInfo>();
+            Asteroids.Sort();
+            
+            // Print the list
+            foreach(var ast in Asteroids)
+            {
+                Console.WriteLine(ast);
+            }
+
+            // Start shootin'!
+
+            int destroyedSoFar = -1;
+            int i = 0;
+            while(Asteroids.Any(x => !x.Destroyed))
+            {
+                i = 0;
+                while(i < Asteroids.Count)
+                {
+                    var currAsteroid = Asteroids[i];
+                    if (currAsteroid.Destroyed)
+                    {
+                        i++;
+                        continue;
+                    }
+                    currAsteroid.Destroyed = true;
+                    currAsteroid.DestroyedOrder = ++destroyedSoFar;
+                    do
+                    {
+                        i++;
+                    }
+                    while (i < Asteroids.Count && currAsteroid.Quadrant == Asteroids[i].Quadrant && currAsteroid.Slope == Asteroids[i].Slope);
+                }
+            }
+
+            Console.WriteLine("After shootin...");
+            foreach (var ast in Asteroids)
+            {
+                Console.WriteLine(ast);
+            }
+
+            return -123;
         }
 
         private void Log(string log)
         {
 //            Console.WriteLine(log);
         }
+
+        private void LogShot(string log)
+        {
+            Console.WriteLine(log);
+        }
+    }
+
+    public class AsteroidInfo : IComparable<AsteroidInfo>
+    {
+        public int Row { get; set; }
+        public int Col { get; set; }
+        public int DeltaRow { get; set; }
+        public int DeltaCol { get; set; }
+        public bool Destroyed { get; set; }
+        public int DestroyedOrder { get; set; } = 0;
+        public decimal Slope
+        {
+            get
+            {
+                if (DeltaCol == 0) return 999;
+                return -DeltaRow / (DeltaCol * 1m);
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{(Destroyed ? $"DESTROYED ({DestroyedOrder})" : "")} ({Row},{Col}) delta=({DeltaRow},{DeltaCol}) q={Quadrant} s={Slope:#0.###} d={Distance:##.###}";
+        }
+
+        // Quadrants:
+        //  8 1 2
+        //  7 * 3
+        //  6 5 4
+        private int _quadrant = 0;
+        public int Quadrant
+        {
+            get
+            {
+                if (_quadrant == 0)
+                {
+
+                    // im REALLY messing up rows and columns.
+                    if (DeltaCol == 0 && DeltaRow > 0) _quadrant = 1;
+                    if (DeltaCol > 0 && DeltaRow > 0) _quadrant = 2;
+                    if (DeltaCol > 0 && DeltaRow == 0) _quadrant = 3;
+                    if (DeltaCol > 0 && DeltaRow < 0) _quadrant = 4;
+                    if (DeltaCol == 0 && DeltaRow < 0) _quadrant = 5;
+                    if (DeltaCol < 0 && DeltaRow < 0) _quadrant = 6;
+                    if (DeltaCol < 0 && DeltaRow == 0) _quadrant = 7;
+                    if (DeltaCol < 0 && DeltaRow > 0) _quadrant = 8;
+
+                    _quadrant += 2;
+                    if (_quadrant > 8) _quadrant -= 8;
+                }
+                return _quadrant;
+            }
+        }
+
+        public double Distance => Math.Sqrt((DeltaRow * DeltaRow) + (DeltaCol * DeltaCol));
+
+        public int CompareTo(AsteroidInfo other)
+        {
+            int cmpVal;
+            
+            cmpVal = this.Quadrant.CompareTo(other.Quadrant);
+            if (cmpVal != 0) return cmpVal;
+
+            if (this.Quadrant % 2 == 0)
+            {
+                cmpVal = this.Slope.CompareTo(other.Slope);
+                if (cmpVal != 0) return cmpVal;
+            }
+
+            cmpVal = this.Distance.CompareTo(other.Distance);
+            if (cmpVal != 0) return cmpVal;
+
+            // default
+            return cmpVal;
+        }
+
+
     }
 
     public class AsteroidDetectorResult
