@@ -260,7 +260,7 @@ namespace RMays.Aoc2019
             return ParamMode == ParameterMode.Position ? (int)GetListValue(currId + offset)
                 : ParamMode == ParameterMode.Immediate ? currId + offset
                 : ParamMode == ParameterMode.Relative ? RelativeBase + (int)GetListValue(currId + offset)
-                : throw new InvalidOperationException("Invalid parameter mode");
+                : -123; // throw new InvalidOperationException("Invalid parameter mode");
         }
 
         public long Solve(string program, List<long> inputVals)

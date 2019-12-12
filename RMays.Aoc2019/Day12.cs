@@ -55,7 +55,12 @@ namespace RMays.Aoc2019
             Log("");
 
             long totalStepsTaken = 0;
-            var PlanetHashes = new List<string>();
+            var PlanetXHashes = new List<string>();
+            var PlanetYHashes = new List<string>();
+            var PlanetZHashes = new List<string>();
+            long XSteps = 0;
+            long YSteps = 0;
+            long ZSteps = 0;
             for (int i = 1; i <= steps || isPartB; i++)
             {
                 for(int p1 = 0; p1 < Planets.Count - 1; p1++)
@@ -73,19 +78,90 @@ namespace RMays.Aoc2019
 
                 totalStepsTaken++;
 
-                string hash = "";
-                for (int p = 0; p < Planets.Count; p++)
+                var hashes = GetHashes(Planets);
+                if (PlanetXHashes.Contains(hashes[0]))
                 {
-                    hash += Planets[p].GetHash();
-                }
-                if (PlanetHashes.Contains(hash))
-                {
-                    return totalStepsTaken;
+                    if (XSteps == 0)
+                    {
+                        XSteps = totalStepsTaken;
+                    }
                 }
                 else
                 {
-                    PlanetHashes.Add(hash);
+                    PlanetXHashes.Add(hashes[0]);
                 }
+
+                if (PlanetYHashes.Contains(hashes[1]))
+                {
+                    if (YSteps == 0) YSteps = totalStepsTaken;
+                }
+                else
+                {
+                    PlanetYHashes.Add(hashes[1]);
+                }
+
+                if (PlanetZHashes.Contains(hashes[2]))
+                {
+                    if (ZSteps == 0) ZSteps = totalStepsTaken;
+                }
+                else
+                {
+                    PlanetZHashes.Add(hashes[2]);
+                }
+
+                if (XSteps != 0 && YSteps != 0 && ZSteps != 0)
+                {
+                    // Done!  TODO: Simplify; reduce by common factors.
+                    XSteps--;
+                    YSteps--;
+                    ZSteps--;
+
+                    for (int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
+                    {
+                        if (XSteps % f == 0 && YSteps % f == 0 && ZSteps % f == 0)
+                        {
+                            XSteps /= f;
+                            YSteps /= f;
+                            ZSteps /= f;
+                        }
+                    }
+
+                    long overallFactor = 1;
+
+                    for(int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
+                    {
+                        if (XSteps % f == 0 && YSteps % f == 0)
+                        {
+                            XSteps /= f;
+                            YSteps /= f;
+                            overallFactor *= f;
+                        }
+                    }
+
+                    for (int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
+                    {
+                        if (XSteps % f == 0 && ZSteps % f == 0)
+                        {
+                            XSteps /= f;
+                            ZSteps /= f;
+                            overallFactor *= f;
+                        }
+                    }
+
+                    for (int f = 2; f <= Math.Sqrt(YSteps) + 1; f++)
+                    {
+                        if (YSteps % f == 0 && ZSteps % f == 0)
+                        {
+                            YSteps /= f;
+                            ZSteps /= f;
+                            overallFactor *= f;
+                        }
+                    }
+
+                    return /* overallFactor * */ XSteps * YSteps * ZSteps;
+                }
+
+                Log(totalStepsTaken + ": " + hashes[0], true);
 
                 // Print something?
                 Log($"After {i} steps:");
@@ -94,9 +170,24 @@ namespace RMays.Aoc2019
                     PrintPlanet(Planets[p]);
                 }
                 Log("");
+
+
             }
 
             return -1;
+        }
+
+        public List<string> GetHashes(List<Planet> Planets)
+        {
+            var hashes = new List<string> { "", "", "" };
+            for (int p = 0; p < Planets.Count; p++)
+            {
+                hashes[0] += $"({Planets[p].X},{Planets[p].XVel})";
+                hashes[1] += $"({Planets[p].Y},{Planets[p].YVel})";
+                hashes[2] += $"({Planets[p].Z},{Planets[p].ZVel})";
+            }
+
+            return hashes;
         }
 
         public int GetTotalEnergyOfAllPlanets(List<Planet> Planets)
