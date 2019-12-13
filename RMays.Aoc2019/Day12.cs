@@ -55,9 +55,10 @@ namespace RMays.Aoc2019
             Log("");
 
             long totalStepsTaken = 0;
-            var PlanetXHashes = new List<string>();
-            var PlanetYHashes = new List<string>();
-            var PlanetZHashes = new List<string>();
+            var initialHashes = GetHashes(Planets);
+            var PlanetXHashToFind = initialHashes[0];
+            var PlanetYHashToFind = initialHashes[1];
+            var PlanetZHashToFind = initialHashes[2];
             long XSteps = 0;
             long YSteps = 0;
             long ZSteps = 0;
@@ -79,90 +80,50 @@ namespace RMays.Aoc2019
                 totalStepsTaken++;
 
                 var hashes = GetHashes(Planets);
-                if (PlanetXHashes.Contains(hashes[0]))
+                if (PlanetXHashToFind == hashes[0])
                 {
-                    if (XSteps == 0)
-                    {
-                        XSteps = totalStepsTaken;
-                    }
-                }
-                else
-                {
-                    PlanetXHashes.Add(hashes[0]);
+                    if (XSteps == 0) XSteps = totalStepsTaken;
                 }
 
-                if (PlanetYHashes.Contains(hashes[1]))
+                if (PlanetYHashToFind == hashes[1])
                 {
                     if (YSteps == 0) YSteps = totalStepsTaken;
                 }
-                else
-                {
-                    PlanetYHashes.Add(hashes[1]);
-                }
 
-                if (PlanetZHashes.Contains(hashes[2]))
+                if (PlanetZHashToFind == hashes[2])
                 {
                     if (ZSteps == 0) ZSteps = totalStepsTaken;
-                }
-                else
-                {
-                    PlanetZHashes.Add(hashes[2]);
                 }
 
                 if (XSteps != 0 && YSteps != 0 && ZSteps != 0)
                 {
-                    // Done!  TODO: Simplify; reduce by common factors.
-                    XSteps--;
-                    YSteps--;
-                    ZSteps--;
-
-                    for (int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
+                    // Done!
+                    long product = 1;
+                    for (int f = 2; f < Math.Sqrt(Math.Max(XSteps, Math.Max(YSteps, ZSteps))) + 1; f++)
                     {
-                        if (XSteps % f == 0 && YSteps % f == 0 && ZSteps % f == 0)
+                        while (XSteps % f == 0 || YSteps % f == 0 || ZSteps % f == 0)
+                        {
+                            product *= f;
+                            if (XSteps % f == 0) XSteps /= f;
+                            if (YSteps % f == 0) YSteps /= f;
+                            if (ZSteps % f == 0) ZSteps /= f;
+                        }
+                        /*
+                        while (XSteps % f == 0 && YSteps % f == 0 && ZSteps % f == 0)
                         {
                             XSteps /= f;
                             YSteps /= f;
                             ZSteps /= f;
                         }
+                        */
                     }
 
-                    long overallFactor = 1;
-
-                    for(int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
-                    {
-                        if (XSteps % f == 0 && YSteps % f == 0)
-                        {
-                            XSteps /= f;
-                            YSteps /= f;
-                            overallFactor *= f;
-                        }
-                    }
-
-                    for (int f = 2; f <= Math.Sqrt(XSteps) + 1; f++)
-                    {
-                        if (XSteps % f == 0 && ZSteps % f == 0)
-                        {
-                            XSteps /= f;
-                            ZSteps /= f;
-                            overallFactor *= f;
-                        }
-                    }
-
-                    for (int f = 2; f <= Math.Sqrt(YSteps) + 1; f++)
-                    {
-                        if (YSteps % f == 0 && ZSteps % f == 0)
-                        {
-                            YSteps /= f;
-                            ZSteps /= f;
-                            overallFactor *= f;
-                        }
-                    }
-
-                    return /* overallFactor * */ XSteps * YSteps * ZSteps;
+                    return product * XSteps * YSteps * ZSteps;
                 }
 
-                Log(totalStepsTaken + ": " + hashes[0], true);
+                //Log(totalStepsTaken + ": " + hashes[0], true);
 
+                /*
                 // Print something?
                 Log($"After {i} steps:");
                 for (int p = 0; p < Planets.Count; p++)
@@ -170,7 +131,7 @@ namespace RMays.Aoc2019
                     PrintPlanet(Planets[p]);
                 }
                 Log("");
-
+                */
 
             }
 
