@@ -48,6 +48,11 @@ namespace RMays.Aoc2019
             this.Outputs = new List<long>();
         }
 
+        public void SetAddress(int address, long value)
+        {
+            list[address] = value;
+        }
+
         public void InjectInput(long newInput)
         {
             ProgramInput.Add(newInput);
@@ -59,6 +64,17 @@ namespace RMays.Aoc2019
         {
             var output = Run();
             return new List<long> { output };
+        }
+
+        public long DequeueOutput()
+        {
+            if (!this.Outputs.Any())
+            {
+                throw new ApplicationException("No output");
+            }
+            var toReturn = this.Outputs[0];
+            Outputs.RemoveAt(0);
+            return toReturn;
         }
 
         public long Run(List<long> NewInputVals)
@@ -277,7 +293,7 @@ namespace RMays.Aoc2019
 
         private void PrintWarn(string debugLine)
         {
-            Console.WriteLine(debugLine);
+            //Console.WriteLine(debugLine);
         }
 
         private void PrintLinePrefix(int instructionId, int paramsToPrint)
