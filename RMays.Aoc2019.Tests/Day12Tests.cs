@@ -62,8 +62,9 @@ namespace RMays.Aoc2019.Tests
         [Test]
         public void DoItB() // ?
         {
-            var day = GetDayObject();
-            Console.WriteLine(day.SolveB(inputData));
+            var day = new Day12();
+            var result = day.Solve(inputData, 1, true);
+            Console.WriteLine(result);
         }
 
         [Test]
