@@ -226,9 +226,9 @@ namespace RMays.Aoc2019
             long MinFuel = 1;
             long MaxFuel = 1_000_000_000_000;
             long result = -3;
-            while(MinFuel < MaxFuel - 1)
+            while(MinFuel < MaxFuel)
             {
-                var candidate = (MinFuel + MaxFuel) / 2;
+                var candidate = (long)Math.Ceiling((MinFuel + MaxFuel) / 2.0);
                 result = Solve(Reactions, candidate);
                 if (result < StartingOre)
                 {
@@ -245,16 +245,7 @@ namespace RMays.Aoc2019
                 }
             }
 
-            // Check for off-by-one errors.
-            var resultLow = Solve(Reactions, MinFuel - 1);
-            var resultMid = Solve(Reactions, MinFuel);
-            var resultHigh = Solve(Reactions, MinFuel + 1);
-            if (resultHigh < StartingOre) return MinFuel + 1;
-            if (resultMid < StartingOre) return MinFuel;
-            if (resultLow < StartingOre) return MinFuel - 1;
-
-
-            return -4;
+            return MinFuel;
         }
 
         public class Reaction
