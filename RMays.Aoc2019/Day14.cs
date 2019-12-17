@@ -222,9 +222,9 @@ namespace RMays.Aoc2019
                 Reactions.Add(new Reaction(line));
             }
 
-            long StartingOre = 1_000_000_000_000;
+            long StartingOre = 1000000000000;
             long MinFuel = 1;
-            long MaxFuel = 1_000_000_000_000;
+            long MaxFuel = 1000000000000;
             long result = -3;
             while(MinFuel < MaxFuel)
             {
