@@ -8,7 +8,6 @@ namespace RMays.Aoc
 {
     public interface IDay<T>
     {
-        T SolveA(string input);
-        T SolveB(string input);
+        T Solve(string input, bool isPartB = false);
     }
 }

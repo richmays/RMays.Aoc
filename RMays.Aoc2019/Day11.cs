@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day11 : IDay<long>
+    public class Day11 : DayBase<long>
     {
         public long SolveA(string input)
         {

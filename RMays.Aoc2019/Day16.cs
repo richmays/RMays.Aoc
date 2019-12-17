@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day16 : IDay<long>
+    public class Day16 : DayBase<long>
     {
-        public long SolveA(string input)
+        public override long SolveA(string input)
         {
             return Solve(input);
         }
@@ -89,7 +89,7 @@ namespace RMays.Aoc2019
             return pattern[(int)Math.Floor(((digit1 + 1) / ((digit2 + 1) * 1.0)) % 4)];
         }
 
-        public long SolveB(string input)
+        public new long SolveB(string input)
         {
             var offset = int.Parse(input.Substring(0, 7));
             var trueInput = new StringBuilder();

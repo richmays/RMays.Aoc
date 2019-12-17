@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day3 : IDay<long>
+    public class Day3 : DayBase<long>
     {
-        public long SolveA(string input)
+        public override long SolveA(string input)
         {
-            return SolveA(input, false);
+            return Solve(input, false);
         }
 
-        public long SolveA(string input, bool isPartB = false)
+        public override long Solve(string input, bool isPartB = false)
         {
             var interCoords = new List<string>();
             var wire1Dist = new Dictionary<string, int>();
@@ -244,9 +244,9 @@ namespace RMays.Aoc2019
             return fewestSteps;
         }
 
-        public long SolveB(string input)
+        public override long SolveB(string input)
         {
-            return SolveA(input, true);
+            return Solve(input, true);
         }
 
         internal class WireInfo

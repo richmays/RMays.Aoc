@@ -25,7 +25,7 @@ namespace RMays.Aoc2019.Tests
         public void PartATests(string input, int expectedOutput)
         {
             var day = GetDayObject();
-            var result = day.SolveA(input);
+            var result = day.Solve(input);
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -34,7 +34,7 @@ namespace RMays.Aoc2019.Tests
         public void PartBTests(string input, int expectedOutput)
         {
             var day = GetDayObject();
-            var result = day.SolveB(input);
+            var result = day.Solve(input, true);
             Assert.AreEqual(expectedOutput, result);
         }
 
@@ -42,21 +42,21 @@ namespace RMays.Aoc2019.Tests
         public void DoItA() // ?
         {
             var day = GetDayObject();
-            Console.WriteLine(day.SolveA(inputData));
+            Console.WriteLine(day.Solve(inputData));
         }
 
         [Test]
         public void DoItB() // ?
         {
             var day = GetDayObject();
-            Console.WriteLine(day.SolveB(inputData));
+            Console.WriteLine(day.Solve(inputData, true));
         }
 
         [Test]
         public void DoItA_Answer()
         {
             var day = GetDayObject();
-            var result = day.SolveA(inputData);
+            var result = day.Solve(inputData);
             Assert.AreEqual(knownOutputA, result.ToString());
         }
 
@@ -64,7 +64,7 @@ namespace RMays.Aoc2019.Tests
         public void DoItB_Answer()
         {
             var day = GetDayObject();
-            var result = day.SolveB(inputData);
+            var result = day.Solve(inputData, true);
             Assert.AreEqual(knownOutputB, result.ToString());
         }
     }
