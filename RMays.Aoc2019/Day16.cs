@@ -89,7 +89,7 @@ namespace RMays.Aoc2019
             return pattern[(int)Math.Floor(((digit1 + 1) / ((digit2 + 1) * 1.0)) % 4)];
         }
 
-        public new long SolveB(string input)
+        public override long SolveB(string input)
         {
             var offset = int.Parse(input.Substring(0, 7));
             var trueInput = new StringBuilder();
