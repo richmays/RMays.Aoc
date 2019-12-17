@@ -58,6 +58,7 @@
     <Compile Include="Day2.cs" />
     <Compile Include="Day0.cs" />
     <Compile Include="Day1.cs" />
+    <Compile Include="DayBase.cs" />
     <Compile Include="InputData.cs" />
     <Compile Include="IntcodeComp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

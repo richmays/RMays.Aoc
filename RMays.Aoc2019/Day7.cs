@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day7 : IDay<long>
+    public class Day7 : DayBase<long>
     {
         public Day7() { }
 

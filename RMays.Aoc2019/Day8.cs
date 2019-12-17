@@ -9,7 +9,7 @@ namespace RMays.Aoc2019
 {
     // start: 4:10 AM
     // stop: 4:34:37 and 4:46:13 (24m and 35m)
-    public class Day8 : IDay<long>
+    public class Day8 : DayBase<long>
     {
         public long SolveA(string input)
         {

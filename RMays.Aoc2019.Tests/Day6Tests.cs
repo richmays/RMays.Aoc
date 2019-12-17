@@ -15,7 +15,7 @@ namespace RMays.Aoc2019.Tests
         private string knownOutputA = "402879";
         private string knownOutputB = "456";
 
-        private IDay<long> GetDayObject()
+        private DayBase<long> GetDayObject()
         {
             return new Day6();
         }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day2 : IDay<long>
+    public class Day2 : DayBase<long>
     {
-        public long SolveA(string input)
+        public override long SolveA(string input)
         {
             var myList = Parser.Tokenize(input);
             var list = new List<int>();
@@ -82,7 +82,7 @@ namespace RMays.Aoc2019
             return list[0];
         }
 
-        public long SolveB(string input)
+        public override long SolveB(string input)
         {
             for(int noun = 0; noun < 100; noun++)
             {

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day5 : IDay<long>
+    public class Day5 : DayBase<long>
     {
-        public long SolveA(string program)
+        public override long SolveA(string program)
         {
             return Solve(program, 1);
         }
@@ -218,7 +218,7 @@ namespace RMays.Aoc2019
             Console.Write($"] ");
         }
 
-        public long SolveB(string program)
+        public override long SolveB(string program)
         {
             return Solve(program, 5);
         }

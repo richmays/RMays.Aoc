@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace RMays.Aoc2019
 {
-    public class Day4 : IDay<long>
+    public class Day4 : DayBase<long>
     {
-        public long SolveA(string input)
+        public override long SolveA(string input)
         {
-            return SolveBase(input, false);
+            return Solve(input, false);
         }
 
-        public long SolveB(string input)
+        public override long SolveB(string input)
         {
-            return SolveBase(input, true);
+            return Solve(input, true);
         }
 
-        public long SolveBase(string input, bool isPartB = false)
+        public override long Solve(string input, bool isPartB = false)
         {
             var tokens = Parser.Tokenize(input, '-');
             var start = int.Parse(tokens[0]);

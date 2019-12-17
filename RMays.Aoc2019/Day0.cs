@@ -9,18 +9,12 @@ namespace RMays.Aoc2019
 {
     public class Day0 : IDay<long>
     {
-        public long SolveA(string input)
+        public long Solve(string input, bool IsPartB = false)
         {
-            var myList = Parser.Tokenize(input);
-
-
-            return 123;
-        }
-
-        public long SolveB(string input)
-        {
-            var myList = Parser.Tokenize(input);
-      
+            if (!IsPartB)
+            {
+                return 123;
+            }
 
             return 456;
         }
