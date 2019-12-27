@@ -52,6 +52,7 @@ namespace RMays.Aoc2019
                     for (var c = 1; c < grid.GetLongLength(0) - 1; c++)
                     {
                         if (grid[c, r] == '#') continue;
+                        if (grid[c, r] == '@') continue;
                         if (grid[c, r] >= 'a' && grid[c, r] <= 'z') continue;
 
                         int walls = 0;
