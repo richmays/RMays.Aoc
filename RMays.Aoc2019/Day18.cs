@@ -9,6 +9,7 @@ namespace RMays.Aoc2019
 {
     // run time: 13 minutes.  yikes.  i can improve the algorithm by removing the pathfinding / wallbumping,
     // and store the path lengths in a dictionary of lists.
+    // faster version: 4 seconds.  much better!  can probably be improved, but i'm happy with it as-is.
     public class Day18 : IDay<long>
     {
         public long Solve(string input, bool IsPartB = false)
@@ -22,14 +23,34 @@ namespace RMays.Aoc2019
             var gridInfo = GetInfoFromGrid(grid);
             Console.WriteLine(gridInfo);
 
-            // We start at 'Start' with no keys.
-            // Pick a key, and walk to it.  Figure out how many steps it takes to walk there.
+            bool UseAlgorithm1 = false;
 
-            // For now, let's brute force.
-            var paths = new Dictionary<string, long> { { "", 0 } };
-            GetAllPaths(grid, gridInfo, ref paths);
+            // Algorithm 1
+            if (UseAlgorithm1)
+            {
+                // For now, let's brute force.
+                var paths = new Dictionary<string, long> { { "", 0 } };
+                GetAllPaths(grid, gridInfo, ref paths);
 
-            return paths.Values.Min();
+                return paths.Values.Min();
+            }
+            else
+            {
+                // Dictionary.
+                // Key: the interesting node (key, door, start)
+                // Value: dictionary.  key: destination node.  value: steps to reach it.
+                var distances = GetAllDistances(grid, gridInfo);
+
+                // Now the fun begins.  We don't need the grid anymore.
+                var paths = new Dictionary<string, long> { { "@", 0 } };
+
+                long result = -1;
+                while(result == -1)
+                { 
+                    result = SolveUsingDistances(distances, gridInfo, ref paths);
+                }
+                return result;
+            }
 
             /*
             if (IsPartB)
@@ -39,6 +60,242 @@ namespace RMays.Aoc2019
 
             return totalSteps;
             */
+        }
+
+        private long SolveUsingDistances(Dictionary<char, Dictionary<char, Tuple<string, long>>> distances, GridInfo gridInfo, ref Dictionary<string, long> paths)
+        {
+            var NewPaths = new Dictionary<string, long>();
+            var addedPaths = false;
+            var maxPathLength = long.MaxValue;
+
+            foreach (var path in paths.Keys)
+            {
+                // Skip the path if we've already found a shorter complete path.
+                if (paths[path] >= maxPathLength) continue;
+
+
+
+                // Check if we've collected all the keys.
+                bool hasAllKeys = true;
+                foreach (var keyItem in gridInfo.Keys)
+                {
+                    var key = keyItem.Key;
+                    if (!path.Contains(key))
+                    {
+                        hasAllKeys = false;
+                        break;
+                    }
+                }
+
+                if (hasAllKeys)
+                {
+                    // This path is done; no need to go any further.
+                    NewPaths.Add(path, paths[path]);
+
+                    // Don't bother looking at any paths that are longer than this one.
+                    if (maxPathLength > paths[path])
+                    {
+                        maxPathLength = paths[path];
+                    }
+                    continue;
+                }
+
+                // Add nodes to the remaining paths.
+                var startSpot = path.ToCharArray().Last();
+                foreach (var endSpot in distances[startSpot].Keys)
+                {
+                    // Skip this path if we already have this key.  (We only check endpoints of paths,
+                    // so it's OK if we step over the same key twice.)
+                    if (path.Contains(endSpot))
+                    {
+                        // We already picked this up, so don't get it again.
+                        continue;
+                    }
+
+                    // TODO: Don't add paths if we don't have the key yet.
+                    var keysRequired = distances[startSpot][endSpot].Item1;
+                    var hasAllKeysForThisPath = true;
+                    foreach (var k in keysRequired.ToCharArray())
+                    {
+                        if (!path.Contains(k.ToString().ToLower()[0]))
+                        {
+                            // We required a key, but we don't have it.  We won't count this path.
+                            hasAllKeysForThisPath = false;
+                        }
+                    }
+
+                    if (hasAllKeysForThisPath)
+                    {
+                        NewPaths.Add(path + endSpot, paths[path] + distances[startSpot][endSpot].Item2);
+                        addedPaths = true;
+                    }
+                }
+            }
+
+            if (addedPaths)
+            {
+                paths = NewPaths;
+
+                // Eliminate bad paths.
+                // We did this in the previous solution; do it again here.
+                // We can clean the paths.  (Important if there's 8 keys we can reach immediately at the beginning.)
+                // Group by the final character, then alphabetize within the group.  Keep the one with the lowest steps.
+                Dictionary<string, long> BestPaths = new Dictionary<string, long>();
+                var longestPathLength = paths.Max(x => x.Key.Length);
+                foreach (var path in paths)
+                {
+                    // Skip the path if we've already found a shorter complete path.  (2nd skip.)
+                    if (paths[path.Key] >= maxPathLength) continue;
+
+                    // Ignore the path if it's too short.
+                    if (path.Key.Length < longestPathLength) continue;
+
+                    var keyFull = path.Key;
+                    var keyLast = keyFull.ToCharArray().Last().ToString();
+                    var keyFirst = new string(keyFull.ToCharArray().Take(keyFull.Length - 1).ToArray());// path.Key;
+
+                    // Now, sort keyFirst.
+                    var x = keyFirst.ToCharArray().Distinct().ToList();
+                    x.Sort();
+                    keyFirst = new string(x.ToArray());
+
+                    var newDictKey = keyFirst + keyLast;
+                    if (BestPaths.ContainsKey(newDictKey))
+                    {
+                        if (BestPaths[newDictKey] > path.Value)
+                        {
+                            BestPaths[newDictKey] = path.Value;
+                        }
+                        else
+                        {
+                            // Found it, but we won't replace.
+                        }
+                    }
+                    else
+                    {
+                        BestPaths.Add(newDictKey, path.Value);
+                    }
+                }
+
+                paths = BestPaths;
+
+                return -1;
+                //return SolveUsingDistances(distances, gridInfo, paths);
+            }
+
+            // The end!
+            return NewPaths.Values.Min();
+        }
+
+        private Dictionary<char, Dictionary<char, Tuple<string, long>>> GetAllDistances(char[,] grid, GridInfo gridInfo)
+        {
+            var result = new Dictionary<char, Dictionary<char, Tuple<string, long>>>();
+            for (var r = 1; r < grid.GetLongLength(1) - 1; r++)
+            {
+                for (var c = 1; c < grid.GetLongLength(0) - 1; c++)
+                {
+                    var g = grid[c, r];
+                    if (g == '#') continue;
+                    if (g == '.') continue;
+                    if (g >= 'A' && g <= 'Z') continue;
+
+                    // We found a key OR the start.
+                    var distancesFromPoint = GetDistancesFromPoint(grid, new Coords(r, c));
+                    result.Add(grid[c, r], distancesFromPoint);
+                }
+            }
+            return result;
+        }
+
+        private Dictionary<char, Tuple<string, long>> GetDistancesFromPoint(char[,] grid, Coords start)
+        {
+            var result = new Dictionary<char, Tuple<string, long>>();
+
+            var Checked = new List<string>();
+            var CoordsToCheck = new List<Tuple<string, Coords>>(); //new List<Coords>();
+            CoordsToCheck.Add(new Tuple<string, Coords>("", start));
+
+            var count = 0;
+            while (CoordsToCheck.Any())
+            {
+                var CoordsAboutToCheck = new List<Tuple<string, Coords>>();
+                foreach (var coordsInfo in CoordsToCheck)
+                {
+                    var keysRequired = coordsInfo.Item1;
+                    var coords = coordsInfo.Item2;
+
+                    var g = grid[coords.Col, coords.Row];
+                    if (g != '#' && g != '.' && count > 0)
+                    {
+                        // We found something interesting (not a wall, not a space).
+                        // Did we find a key?  Add it to the list.
+                        if (g >= 'a' && g <= 'z')
+                        {
+                            if (result.ContainsKey(g))
+                            {
+                                // Don't add it.
+                                // Doesn't handle ALL cases.  But it is good enough.
+                                continue;
+                            }
+                            result.Add(g, new Tuple<string, long>(keysRequired, count));
+                            //continue;
+                        }
+
+                        // Did we find a wall?  We might not have a key.
+                        if (g >= 'A' && g <= 'Z')
+                        {
+                            if (keysRequired.Contains(g))
+                            {
+                                // Probably will never hit this.  This happens when we have a key already, and we found a 2nd door of that type.
+                                continue;
+                            }
+                            else
+                            {
+                                // We haven't found this key yet.  Let's add it to the KeysRequired list.
+                                keysRequired += g;
+                                
+                                // Then later on, when we add this path back, we'll include the keysRequired.
+                            }
+                        }
+                    }
+
+                    Checked.Add(coords.ToString());
+                    Coords coordToCheck;
+
+                    coordToCheck = new Coords(coords.Row, coords.Col - 1);
+                    if (grid[coords.Col - 1, coords.Row] != '#' && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(new Tuple<string, Coords>(keysRequired, coordToCheck));
+                    }
+
+                    coordToCheck = new Coords(coords.Row, coords.Col + 1);
+                    if (grid[coords.Col + 1, coords.Row] != '#' && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(new Tuple<string, Coords>(keysRequired, coordToCheck));
+                    }
+
+                    coordToCheck = new Coords(coords.Row - 1, coords.Col);
+                    if (grid[coords.Col, coords.Row - 1] != '#' && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(new Tuple<string, Coords>(keysRequired, coordToCheck));
+                    }
+
+                    coordToCheck = new Coords(coords.Row + 1, coords.Col);
+                    if (grid[coords.Col, coords.Row + 1] != '#' && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(new Tuple<string, Coords>(keysRequired, coordToCheck));
+                    }
+                }
+                CoordsAboutToCheck = CoordsAboutToCheck.Distinct().ToList();
+                CoordsToCheck.Clear();
+                foreach (var coords in CoordsAboutToCheck)
+                {
+                    CoordsToCheck.Add(coords);
+                }
+                count++;
+            }
+
+            return result;
         }
 
         private void RemoveDeadEnds(ref char[,] grid)
