@@ -12,8 +12,8 @@ namespace RMays.Aoc2019.Tests
     public class Day18Tests
     {
         private string inputData = InputData.Day18;
-        private string knownOutputA = "4042";
-        private string knownOutputB = "456";
+        private string knownOutputA = "4042"; // 10s
+        private string knownOutputB = "2014"; // 3m 19s
 
         private IDay<long> GetDayObject()
         {
@@ -58,7 +58,36 @@ namespace RMays.Aoc2019.Tests
         }
 
         [Test]
-        [TestCase("4, 5, 6", 456)]
+        [TestCase(@"#######
+#a.#Cd#
+##@#@##
+#######
+##@#@##
+#cB#.b#
+#######", 8)]
+        [TestCase(@"###############
+#d.ABC.#.....a#
+######@#@######
+###############
+######@#@######
+#b.....#.....c#
+###############", 24)]
+        [TestCase(@"#############
+#DcBa.#.GhKl#
+#.###@#@#I###
+#e#d#####j#k#
+###C#@#@###J#
+#fEbA.#.FgHi#
+#############", 32)]
+        [TestCase(@"#############
+#g#f.D#..h#l#
+#F###e#E###.#
+#dCba@#@BcIJ#
+#############
+#nK.L@#@G...#
+#M###N#H###.#
+#o#m..#i#jk.#
+#############", 72)]
         public void PartBTests(string input, int expectedOutput)
         {
             var day = GetDayObject();
