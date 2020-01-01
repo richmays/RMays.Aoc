@@ -15,7 +15,20 @@ namespace RMays.Aoc2019
         public long Solve(string input, bool IsPartB = false)
         {
             var grid = ReadGrid(input);
-            PrintGrid(grid);
+            //PrintGrid(grid);
+            if (IsPartB && grid.GetLongLength(0) > 77)
+            {
+                // Some cleanup of the grid.
+                grid[39, 39] = '@';
+                grid[39, 40] = '#';
+                grid[39, 41] = '@';
+                grid[40, 39] = '#';
+                grid[40, 40] = '#';
+                grid[40, 41] = '#';
+                grid[41, 39] = '@';
+                grid[41, 40] = '#';
+                grid[41, 41] = '@';
+            }
 
             RemoveDeadEnds(ref grid);
             PrintGrid(grid);
@@ -23,46 +36,31 @@ namespace RMays.Aoc2019
             var gridInfo = GetInfoFromGrid(grid);
             Console.WriteLine(gridInfo);
 
-            bool UseAlgorithm1 = false;
+            // Dictionary.
+            // Key: the interesting node (key, door, start)
+            // Value: dictionary.  key: destination node.  value: steps to reach it.
+            var distances = GetAllDistances(grid, gridInfo, IsPartB);
 
-            // Algorithm 1
-            if (UseAlgorithm1)
+            // Now the fun begins.  We don't need the grid anymore.
+            var paths = new Dictionary<string, long>();
+            if (!IsPartB)
             {
-                // For now, let's brute force.
-                var paths = new Dictionary<string, long> { { "", 0 } };
-                GetAllPaths(grid, gridInfo, ref paths);
-
-                return paths.Values.Min();
+                paths.Add("0", 0);
             }
             else
             {
-                // Dictionary.
-                // Key: the interesting node (key, door, start)
-                // Value: dictionary.  key: destination node.  value: steps to reach it.
-                var distances = GetAllDistances(grid, gridInfo);
-
-                // Now the fun begins.  We don't need the grid anymore.
-                var paths = new Dictionary<string, long> { { "@", 0 } };
-
-                long result = -1;
-                while(result == -1)
-                { 
-                    result = SolveUsingDistances(distances, gridInfo, ref paths);
-                }
-                return result;
+                paths.Add("0123", 0);
             }
 
-            /*
-            if (IsPartB)
+            long result = -1;
+            while (result == -1)
             {
-                return 456;
+                result = SolveUsingDistances(distances, gridInfo, ref paths, IsPartB);
             }
-
-            return totalSteps;
-            */
+            return result;
         }
 
-        private long SolveUsingDistances(Dictionary<char, Dictionary<char, Tuple<string, long>>> distances, GridInfo gridInfo, ref Dictionary<string, long> paths)
+        private long SolveUsingDistances(Dictionary<char, Dictionary<char, Tuple<string, long>>> distances, GridInfo gridInfo, ref Dictionary<string, long> paths, bool IsPartB = false)
         {
             var NewPaths = new Dictionary<string, long>();
             var addedPaths = false;
@@ -72,8 +70,6 @@ namespace RMays.Aoc2019
             {
                 // Skip the path if we've already found a shorter complete path.
                 if (paths[path] >= maxPathLength) continue;
-
-
 
                 // Check if we've collected all the keys.
                 bool hasAllKeys = true;
@@ -101,9 +97,20 @@ namespace RMays.Aoc2019
                 }
 
                 // Add nodes to the remaining paths.
-                var startSpot = path.ToCharArray().Last();
-                foreach (var endSpot in distances[startSpot].Keys)
+                
+                foreach (var endSpot in gridInfo.Keys.Keys)
                 {
+                    var pathCharArray = path.ToCharArray();
+                    var startSpotIndex = pathCharArray.Length - 1;
+                    var startSpot = pathCharArray[startSpotIndex];
+                    while (!distances[startSpot].Keys.Contains(endSpot))
+                    {
+                        startSpotIndex--;
+                        startSpot = pathCharArray[startSpotIndex];
+                    }
+
+                    // was:  distances[startSpot].Keys)
+
                     // Skip this path if we already have this key.  (We only check endpoints of paths,
                     // so it's OK if we step over the same key twice.)
                     if (path.Contains(endSpot))
@@ -151,13 +158,52 @@ namespace RMays.Aoc2019
                     if (path.Key.Length < longestPathLength) continue;
 
                     var keyFull = path.Key;
+                    /*
+                    // OLD.  works for part 1.
                     var keyLast = keyFull.ToCharArray().Last().ToString();
                     var keyFirst = new string(keyFull.ToCharArray().Take(keyFull.Length - 1).ToArray());// path.Key;
+                    */
+
+                    // NEW.  hopefully works for parts 1 and 2!
+                    // get the last spot in the path that can be reached by each of the starting spots.
+                    var keyLast = "";
+                    var pathKeyArray = path.Key.ToCharArray();
+                    foreach (var c in path.Key.Where(x2 => x2 >= '0' && x2 <= '9'))
+                    {
+                        //var x2 = distances[c].Values.Where(x => pathKeyArray.Reverse().First())
+                        //var tmp = pathKeyArray.Reverse().Where(x2 => distances[c].Select(y => y.Value.Item1).ToString().ToCharArray());
+
+                        //keyLast += pathKeyArray.Where(x2 => distances[c].Select(y => y.Value.Item1).ToString().ToCharArray().Contains(x2)).Last();
+                        var lastKeyFromSection = pathKeyArray.Where(x2 => distances[c].Select(y => y.Key).Contains(x2)).LastOrDefault();
+                        if (lastKeyFromSection != '\0')
+                        {
+                            keyLast += lastKeyFromSection;
+                        }
+                        else
+                        {
+                            keyLast += c;
+                        }
+                        //distances[c].Select(y => y.Key).Contains('f')
+                    }
+                    var keyFirst = keyFull;
+                    foreach (var c in keyLast)
+                    {
+                        keyFirst = string.Join("", keyFirst.Where(x2 => x2 != c));
+                    }
+
 
                     // Now, sort keyFirst.
                     var x = keyFirst.ToCharArray().Distinct().ToList();
                     x.Sort();
                     keyFirst = new string(x.ToArray());
+
+                    // Sort keyLast, too.
+                    if (keyLast.Length > 1)
+                    {
+                        x = keyLast.ToCharArray().Distinct().ToList();
+                        x.Sort();
+                        keyLast = new string(x.ToArray());
+                    }
 
                     var newDictKey = keyFirst + keyLast;
                     if (BestPaths.ContainsKey(newDictKey))
@@ -179,6 +225,7 @@ namespace RMays.Aoc2019
 
                 paths = BestPaths;
 
+
                 return -1;
                 //return SolveUsingDistances(distances, gridInfo, paths);
             }
@@ -187,8 +234,11 @@ namespace RMays.Aoc2019
             return NewPaths.Values.Min();
         }
 
-        private Dictionary<char, Dictionary<char, Tuple<string, long>>> GetAllDistances(char[,] grid, GridInfo gridInfo)
+        private Dictionary<char, Dictionary<char, Tuple<string, long>>> GetAllDistances(char[,] grid, GridInfo gridInfo, bool IsPartB)
         {
+            // How many '@' symbols have we found so far?
+            // When adding to the 'distances' dictionary, we'll use the number isntead of the '@' sign.  Necessary for part 2.
+            var homeCount = 0;
             var result = new Dictionary<char, Dictionary<char, Tuple<string, long>>>();
             for (var r = 1; r < grid.GetLongLength(1) - 1; r++)
             {
@@ -201,7 +251,12 @@ namespace RMays.Aoc2019
 
                     // We found a key OR the start.
                     var distancesFromPoint = GetDistancesFromPoint(grid, new Coords(r, c));
-                    result.Add(grid[c, r], distancesFromPoint);
+                    if (g == '@')
+                    {
+                        g = (char)(homeCount + '0');
+                        homeCount++;
+                    }
+                    result.Add(g, distancesFromPoint);
                 }
             }
             return result;
