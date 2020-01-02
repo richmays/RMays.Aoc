@@ -144,7 +144,7 @@ namespace RMays.Aoc2019
                             return outputVal;
                         }
 
-                        list[GetParamAddress(currId, 1, Param1Mode)] = (int)ProgramInput[CurrInputId];
+                        SetListValue(GetParamAddress(currId, 1, Param1Mode), ProgramInput[CurrInputId]);
                         CurrInputId++;
                         //PrintLinePrefix(currId, 1);
                         //PrintDebug($"Read input ({list[(int)list[currId + 1]]}), store in position {list[currId + 1]}.");
