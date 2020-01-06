@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 namespace RMays.Aoc2019.Tests
 {
     [TestFixture]
-    public class Day0Tests
+    public class Day21Tests
     {
-        private string inputData = InputData.Day0;
+        private string inputData = InputData.Day21;
         private string knownOutputA = "123";
         private string knownOutputB = "456";
 
         private IDay<long> GetDayObject()
         {
-            return new Day0();
+            return new Day21();
         }
 
         [Test]
-        [TestCase(@"1, 2, 3", 123)]
+        [TestCase("1, 2, 3", 123)]
         public void PartATests(string input, int expectedOutput)
         {
             var day = GetDayObject();
@@ -30,7 +30,7 @@ namespace RMays.Aoc2019.Tests
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
+        [TestCase("4, 5, 6", 456)]
         public void PartBTests(string input, int expectedOutput)
         {
             var day = GetDayObject();
