@@ -103,10 +103,129 @@ In your maze, how many steps does it take to get from the open tile marked AA to
 
             if (!IsPartB)
             {
-                return 123;
+                GetSteps(grid, 'A', 'Z');
             }
 
             return 456;
+        }
+
+        private long GetSteps(char[,] grid, char startChar, char endChar)
+        {
+            var start = GetCoords(grid, startChar)[0];
+            start = PortalWiggle(grid, start);
+            var end = GetCoords(grid, endChar)[0];
+
+            var Checked = new List<string>();
+            var CoordsToCheck = new List<Coords>();
+            CoordsToCheck.Add(start);
+
+            var count = 0;
+            while (CoordsToCheck.Any())
+            {
+                var CoordsAboutToCheck = new List<Coords>();
+                foreach (var coordsInfo in CoordsToCheck)
+                {
+                    var coords = coordsInfo;
+
+                    var g = grid[coords.Col, coords.Row];
+
+                    /*
+                    if (g != '#' && g != '.' && count > 0)
+                    {
+                        // We found a portal.
+                        var targetPortal = GetCoords(grid, g).First(x => x.Row != coords.Row || x.Col != coords.Col);
+                        CoordsToCheck.Add(targetPortal);
+                        continue;
+                    }
+                    */
+
+                    Checked.Add(coords.ToString());
+                    Coords coordToCheck;
+
+                    coordToCheck = new Coords(coords.Row, coords.Col - 1);
+                    if (IsSteppable(grid, coordToCheck) && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(coordToCheck);
+                    }
+
+                    coordToCheck = new Coords(coords.Row, coords.Col + 1);
+                    if (IsSteppable(grid, coordToCheck) && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(coordToCheck);
+                    }
+
+                    coordToCheck = new Coords(coords.Row - 1, coords.Col);
+                    if (IsSteppable(grid, coordToCheck) && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(coordToCheck);
+                    }
+
+                    coordToCheck = new Coords(coords.Row + 1, coords.Col);
+                    if (IsSteppable(grid, coordToCheck) && !Checked.Contains(coordToCheck.ToString()))
+                    {
+                        CoordsAboutToCheck.Add(coordToCheck);
+                    }
+                }
+                CoordsAboutToCheck = CoordsAboutToCheck.Distinct().ToList();
+                CoordsToCheck.Clear();
+                foreach (var coords in CoordsAboutToCheck)
+                {
+                    CoordsToCheck.Add(coords);
+                }
+                count++;
+            }
+
+            //return result;
+
+            return 123123;
+        }
+
+        private Coords PortalWiggle(char[,] grid, Coords coord)
+        {
+            if (grid[coord.Col - 1, coord.Row] == '.')
+            {
+                return new Coords { Col = coord.Col - 1, Row = coord.Row };
+            }
+            if (grid[coord.Col + 1, coord.Row] == '.')
+            {
+                return new Coords { Col = coord.Col + 1, Row = coord.Row };
+            }
+            if (grid[coord.Col, coord.Row - 1] == '.')
+            {
+                return new Coords { Col = coord.Col, Row = coord.Row - 1 };
+            }
+            if (grid[coord.Col, coord.Row + 1] == '.')
+            {
+                return new Coords { Col = coord.Col, Row = coord.Row + 1 };
+            }
+            throw new ApplicationException($"Can't wiggle: {coord}");
+        }
+
+        private bool IsSteppable(char[,] grid, Coords coord)
+        {
+            var g = grid[coord.Col, coord.Row];
+            return g != '#';
+        }
+
+        private bool IsSteppable(char[,] grid, int col, int row)
+        {
+            return IsSteppable(grid, new Coords { Col = col, Row = row });
+        }
+
+        private List<Coords> GetCoords(char[,] grid, char g)
+        {
+            var results = new List<Coords>();
+            for (var r = 0; r < grid.GetLongLength(1); r++)
+            {
+                for (var c = 0; c < grid.GetLongLength(0); c++)
+                {
+                    if (grid[c,r] == g)
+                    {
+                        results.Add(new Coords { Col = c, Row = r });
+                    }
+                }
+            }
+            return results;
         }
 
         private char[,] ReadGrid(string input)
@@ -149,19 +268,19 @@ In your maze, how many steps does it take to get from the open tile marked AA to
                     {
                         // Found the top / left of a portal.
                         // Is it the TOP of a portal?
-                        if (r + 1 > rows && IsLetter(grid[c, r + 1]) && grid[c, r + 2] == '.')
+                        if (r + 2 < rows && IsLetter(grid[c, r + 1]) && grid[c, r + 2] == '.')
                         {
                             var key = $"{g}{grid[c, r + 1]}";
-                            var newCoords = new Coords(r + 2, c);
+                            var newCoords = new Coords(r + 1, c);
                             AddToPortals(ref Portals, key, newCoords);
                             grid[c, r + 1] = '$';
                         }
 
                         // Is it the BOTTOM of a portal?
-                        else if (r - 1 > 0 && IsLetter(grid[c, r + 1]) && grid[c, r - 1] == '.')
+                        else if (r - 1 >= 0 && IsLetter(grid[c, r + 1]) && grid[c, r - 1] == '.')
                         {
                             var key = $"{g}{grid[c, r + 1]}";
-                            var newCoords = new Coords(r - 1, c);
+                            var newCoords = new Coords(r, c);
                             AddToPortals(ref Portals, key, newCoords);
                             grid[c, r + 1] = '$';
                         }
@@ -170,24 +289,74 @@ In your maze, how many steps does it take to get from the open tile marked AA to
                         else if (c + 2 < cols && IsLetter(grid[c + 1, r]) && grid[c + 2, r] == '.')
                         {
                             var key = $"{g}{grid[c + 1, r]}";
-                            var newCoords = new Coords(r, c + 2);
+                            var newCoords = new Coords(r, c + 1);
                             AddToPortals(ref Portals, key, newCoords);
                             grid[c + 1, r] = '$';
                         }
 
                         // Is it the RIGHT SIDE of the portal?
-                        else if (c - 1 > 0 && IsLetter(grid[c + 1, r]) && grid[c - 1, r] == '.')
+                        else if (c - 1 >= 0 && IsLetter(grid[c + 1, r]) && grid[c - 1, r] == '.')
                         {
                             var key = $"{g}{grid[c + 1, r]}";
-                            var newCoords = new Coords(r, c - 1);
+                            var newCoords = new Coords(r, c);
                             AddToPortals(ref Portals, key, newCoords);
                             grid[c + 1, r] = '$';
+                        }
+
+                        else
+                        {
+                            // We missed something!
+                            throw new ApplicationException($"Found letter '{g}' at position (c:{c},r:{r}) (max: (c:{cols},r:{rows})) but didn't count it.");
                         }
                     }
                 }
             }
 
+            //PrintGrid(grid);
+
+            for (var r = 0; r < grid.GetLongLength(1); r++)
+            {
+                for (var c = 0; c < grid.GetLongLength(0); c++)
+                {
+                    var g = grid[c, r];
+                    if (g != '#' && g != '.')
+                    {
+                        grid[c, r] = '#';
+                    }
+                }
+            }
+
+            //PrintGrid(grid);
+
+            var portalAA = Portals["AA"][0];
+            var portalZZ = Portals["ZZ"][0];
+            grid[portalAA.Col, portalAA.Row] = 'A';
+            grid[portalZZ.Col, portalZZ.Row] = 'Z';
+
+            var currPortalId = 'B';
+            foreach (var portal in Portals.Where(x => x.Key != "AA" && x.Key != "ZZ"))
+            {
+                grid[portal.Value[0].Col, portal.Value[0].Row] = currPortalId;
+                grid[portal.Value[1].Col, portal.Value[1].Row] = currPortalId;
+                currPortalId++;
+                if (currPortalId == 'Z') currPortalId = 'b';
+            }
+
+            PrintGrid(grid);
+
             return grid;
+        }
+
+        private void PrintGrid(char[,] grid)
+        {
+            for (var r = 0; r < grid.GetLongLength(1); r++)
+            {
+                for (var c = 0; c < grid.GetLongLength(0); c++)
+                {
+                    Console.Write(grid[c, r]);
+                }
+                Console.WriteLine();
+            }
         }
 
         private void AddToPortals(ref Dictionary<string, List<Coords>> Portals, string key, Coords coords)
