@@ -154,66 +154,31 @@ Successfully survey the rest of the hull by ending your program with RUN. What a
             }
             else
             {
+                SendCommands(compy,
+                    // Jump if ??#(.??,?.?,??.)#
+                    "OR E T",
+                    "AND F T",
+                    "AND G T",
+                    "NOT T T",
+                    "AND D T",
+                    "AND H T",
+                    "OR T J",
 
-                // .??#
-                SendCommand(compy, "NOT A J");
+                    // Set T to false
+                    "NOT B T",
+                    "AND B T",
 
-                /*
-                // ???#.
-                SendCommand(compy, "NOT E T");
-                SendCommand(compy, "OR T J");
-                */
+                    // AND Jump if ?(.?,?.)
+                    "OR B T",
+                    "AND C T",
+                    "NOT T T",
+                    "AND T J",
 
-                // ??.#..
-                SendCommand(compy, "OR C T");
-                SendCommand(compy, "OR E T");
-                //SendCommand(compy, "OR F T");
-                SendCommand(compy, "NOT T T");
-                SendCommand(compy, "OR T J");
+                    // Or jump if .
+                    "NOT A T",
+                    "OR T J"
+                );
 
-                // ?..#?
-                SendCommand(compy, "OR B T");
-                SendCommand(compy, "OR C T");
-                SendCommand(compy, "NOT T T");
-                SendCommand(compy, "OR T J");
-
-                // ?.?#???#?
-                // ??.#???#?
-                SendCommand(compy, "OR B T");
-                SendCommand(compy, "AND C T");
-                SendCommand(compy, "NOT T T");
-                SendCommand(compy, "AND H T");
-                SendCommand(compy, "OR T J");
-
-                // ???#
-                SendCommand(compy, "AND D J");
-
-
-                /*
-                // ?..#.
-                SendCommand(compy, "NOT D T");
-                SendCommand(compy, "OR B T");
-                SendCommand(compy, "OR C T");
-                SendCommand(compy, "OR E T");
-                SendCommand(compy, "NOT T T");
-                SendCommand(compy, "OR T J");
-                */
-
-
-                /*
-                // ?#.#???#
-                SendCommand(compy, "NOT C T");
-                SendCommand(compy, "AND B T");
-                SendCommand(compy, "AND D T");
-                SendCommand(compy, "AND H T");
-                SendCommand(compy, "OR T J");
-                */
-
-                // ####J.#.J#..#
-                /*
-                SendCommand(compy, "NOT A T");
-                SendCommand(compy, "OR T J");
-                */
                 SendCommand(compy, "RUN");
             }
 
@@ -221,6 +186,14 @@ Successfully survey the rest of the hull by ending your program with RUN. What a
             PrintAllOutput(compy);
 
             return -4;
+        }
+
+        private void SendCommands(IntcodeComp compy, params string[] commands)
+        {
+            foreach(var command in commands)
+            {
+                SendCommand(compy, command);
+            }
         }
 
         private void SendCommand(IntcodeComp compy, string command)

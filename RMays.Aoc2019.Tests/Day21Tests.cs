@@ -13,7 +13,7 @@ namespace RMays.Aoc2019.Tests
     {
         private string inputData = InputData.Day21;
         private string knownOutputA = "123";
-        private string knownOutputB = "456";
+        private string knownOutputB = "1140920822";
 
         private IDay<long> GetDayObject()
         {
