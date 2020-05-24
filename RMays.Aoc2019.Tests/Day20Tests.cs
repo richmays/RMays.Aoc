@@ -17,7 +17,9 @@ namespace RMays.Aoc2019.Tests
 
         private IDay<long> GetDayObject()
         {
-            return new Day20();
+            // 'Day20' was the old class.  I wasn't getting anywhere.
+            // New class is 'Day20b'.
+            return new Day20b();
         }
 
         [Test]
