@@ -167,18 +167,28 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
         /// <summary>
         /// How many cards start in the deck?
         /// </summary>
-        protected long DeckSize { get; set; }
-        
+        public long DeckSize { get; set; }
+
         /// <summary>
-        /// Which card do we want to check the position of at the end?
+        /// Which card do we want to check the position of at the end? (Part A only)
         /// </summary>
-        protected long CardToCheck { get; set; }
+        public long CardToCheck { get; set; }
 
-        protected long ShuffleProcesses { get; set; }
+        /// <summary>
+        /// Which position do we want to check the value of at the end? (Part B only)
+        /// </summary>
+        public long PositionToCheck { get; set; }
 
-        public Day22() : this(10007, 2019)
+        /// <summary>
+        /// How many times should we run the shuffle process?  Part A is 1, Part B is a huge number.
+        /// </summary>
+        public long ShuffleProcesses { get; set; }
+
+        public Day22()// : this(10007, 2019)
         {
         }
+
+        /*
 
         public Day22(long deckSize, long cardToCheck)
         {
@@ -193,23 +203,127 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
             CardToCheck = cardToCheck;
             ShuffleProcesses = shuffleProcesses;
         }
+        */
+
+        public string SolveFull(string input)
+        {
+            var deck = SolveForwardsFull(input, false);
+
+            var result = "";
+            for(int i = 0; i < DeckSize; i++)
+            {
+                result += $"{deck[i]} ";
+            }
+
+            return result.Trim();
+        }
 
         public long Solve(string input, bool IsPartB = false)
         {
-            if (IsPartB)
+            if (!IsPartB)
             {
-                return -66;
+                return SolveForwards(input, IsPartB);
+            }
+            else
+            {
+                return SolveForwards(input, IsPartB);
+            }
+        }
+
+        private long SolveBackwards(string input)
+        {
+            // Starting with a factory order deck, run the commands Backwards, remembering ONLY what's in position 'positionToCheck'.
+            long currPos = PositionToCheck;
+            var commands = Parser.TokenizeLines(input);
+
+            commands.Reverse();
+
+            foreach (var command in commands)
+            {
+                var splitCommand = Parser.Tokenize(command, ' ');
+                // The 2nd token has the command.
+                switch (splitCommand[1])
+                {
+                    case "into":
+                        // deal into new stack
+                        currPos = DeckSize - currPos - 1;
+                        break;
+                    case "with":
+                        // deal with increment N
+                        var increment = int.Parse(splitCommand[3]);
+                        // Works, but is sloppy
+                        //currPos = (DeckSize * DeckSize + (currPos * (-1 * increment))) % DeckSize;
+
+                        // A little better; we won't get an overflow, I think.
+                        // We might.  We'll see.
+                        currPos = (DeckSize - (currPos * increment) % DeckSize) % DeckSize;
+                        break;
+                    default:
+                        // cut N
+                        var cut = int.Parse(splitCommand[1]);
+                        currPos = (DeckSize + currPos + cut) % DeckSize;
+                        break;
+                }
             }
 
+            return currPos;
+        }
+
+        private long SolveReverse(string input)
+        {
+            // Starting with a factory order deck, run the commands in reverse, remembering ONLY what's in position 'positionToCheck'.
+            long currPos = PositionToCheck;
+            var commands = Parser.TokenizeLines(input);
+
+            commands.Reverse();
+
+            foreach (var command in commands)
+            {
+                var splitCommand = Parser.Tokenize(command, ' ');
+                // The 2nd token has the command.
+                switch (splitCommand[1])
+                {
+                    case "into":
+                        // deal into new stack
+                        currPos = DeckSize - currPos - 1;
+                        break;
+                    case "with":
+                        // deal with increment N
+                        var increment = int.Parse(splitCommand[3]);
+                        // Works, but is sloppy
+                        //currPos = (DeckSize * DeckSize + (currPos * (-1 * increment))) % DeckSize;
+
+                        // A little better; we won't get an overflow, I think.
+                        // We might.  We'll see.
+                        currPos = (DeckSize - (currPos * increment) % DeckSize) % DeckSize;
+                        break;
+                    default:
+                        // cut N
+                        var cut = int.Parse(splitCommand[1]);
+                        currPos = (DeckSize + currPos + cut) % DeckSize;
+                        break;
+                }
+            }
+
+            return currPos;
+        }
+
+        private long[] SolveForwardsFull(string input, bool IsPartB)
+        {
             // Simplest way is to use an array.  Maybe a stack?  Let's use an array.
             var deck = FactoryResetDeck(DeckSize);
 
             var commands = Parser.TokenizeLines(input);
-            foreach(var command in commands)
+            if (IsPartB)
+            {
+                commands.Reverse();
+            }
+
+            foreach (var command in commands)
             {
                 var splitCommand = Parser.Tokenize(command, ' ');
                 // The 2nd token has the command.
-                switch(splitCommand[1])
+                switch (splitCommand[1])
                 {
                     case "into":
                         // deal into new stack
@@ -226,6 +340,12 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
                 }
             }
 
+            return deck;
+        }
+
+        public long SolveForwards(string input, bool IsPartB = false)
+        {
+            var deck = SolveForwardsFull(input, IsPartB);
             return FindCardPosition(deck, CardToCheck);
         }
 
