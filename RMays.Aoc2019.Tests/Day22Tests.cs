@@ -92,7 +92,7 @@ namespace RMays.Aoc2019.Tests
         [TestCase(10, @"deal with increment 3", 3, 9)]
         public void PartATests(long deckSize, string input, long cardToCheck, long expectedOutput)
         {
-            var day = GetDayObject(deckSize, cardToCheck);
+            var day = new Day22 { DeckSize = deckSize, CardToCheck = cardToCheck }; // GetDayObject(deckSize, cardToCheck);
             var result = day.Solve(input);
             Assert.AreEqual(expectedOutput, result);
         }
@@ -245,8 +245,6 @@ cut -1", "9 2 5 8 1 4 7 0 3 6")]
             Assert.AreEqual(expectedOutput, result);
         }
 
-
-
         [TestCase(@"deal into new stack
 deal into new stack", "0 1 2 3 4 5 6 7 8 9")]
         [TestCase(@"deal with increment 7
@@ -297,6 +295,16 @@ cut -1", "9 2 5 8 1 4 7 0 3 6")]
             var result = day.Solve(inputData);
             Assert.AreEqual(knownOutputA, result.ToString());
         }
+
+        /*
+        [Test]
+        public void DoItA_Answer_NewMethod()
+        {
+            var day = new Day22 { DeckSize = 10007, CardToCheck = 2019 };
+            var result = day.SolveNewMethodA(inputData);
+            Assert.AreEqual(knownOutputA, result.ToString());
+        }
+        */
 
         [Test]
         public void DoItB_Answer()

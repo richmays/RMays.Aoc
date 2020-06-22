@@ -135,14 +135,17 @@ deal with increment 7
 deal into new stack
 deal into new stack
 Result: 0 3 6 9 2 5 8 1 4 7
+
 cut 6
 deal with increment 7
 deal into new stack
 Result: 3 0 7 4 1 8 5 2 9 6
+
 deal with increment 7
 deal with increment 9
 cut -2
 Result: 6 3 0 7 4 1 8 5 2 9
+
 deal into new stack
 cut -2
 deal with increment 7
@@ -154,6 +157,7 @@ deal with increment 9
 deal with increment 3
 cut -1
 Result: 9 2 5 8 1 4 7 0 3 6
+
 Positions within the deck count from 0 at the top, then 1 for the card immediately below the top card, and so on to the bottom. 
 (That is, cards start in the position matching their number.)
 
@@ -230,13 +234,37 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
             }
         }
 
-        private long SolveBackwards(string input)
+        public long SolveNewMethodB(string input)
         {
-            // Starting with a factory order deck, run the commands Backwards, remembering ONLY what's in position 'positionToCheck'.
-            long currPos = PositionToCheck;
+            // Simplest way is to use an array.  Maybe a stack?  Let's use an array.
             var commands = Parser.TokenizeLines(input);
 
-            commands.Reverse();
+            // Theory: Each command can be reduced to 2 numbers.  We need to combine these numbers so we can do some fancy modular-exponentiation at the end.
+            // Linear Congruential Generator!  https://en.wikipedia.org/wiki/Linear_congruential_generator
+            // X[n+1] = (aX[n] + c) mod m
+            // X is sequence
+            // X[n] is the nth item of sequence
+            // m is the modulus; 0 < m
+            // a is the multiplier; 0 < a < m
+            // c is the increment; 0 <= c < m
+            // X[0] is the seed; 0 <= X[0] < m
+
+            // Given a bunch of shuffles, build up 'a' and 'c'.
+            // Use the expression 'AddDelta(a,c)'.
+
+
+            // What does it mean to 'deal with increment N', in terms of the original deck?
+            // AddDelta(N,0)
+
+            // What does it mean to 'deal into new stack'?
+            // AddDelta(-1,-1)
+
+            // What does it mean to 'cut N'?
+            // AddDelta(1,-N)
+
+            long a = 1;
+            long c = 0;
+            int N; // the numeric parameter to the deck action command
 
             foreach (var command in commands)
             {
@@ -246,32 +274,40 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
                 {
                     case "into":
                         // deal into new stack
-                        currPos = DeckSize - currPos - 1;
+                        UpdateFactor(ref a, -1, DeckSize);
+                        UpdateFactor(ref c, -1, DeckSize);
                         break;
                     case "with":
                         // deal with increment N
-                        var increment = int.Parse(splitCommand[3]);
-                        // Works, but is sloppy
-                        //currPos = (DeckSize * DeckSize + (currPos * (-1 * increment))) % DeckSize;
-
-                        // A little better; we won't get an overflow, I think.
-                        // We might.  We'll see.
-                        currPos = (DeckSize - (currPos * increment) % DeckSize) % DeckSize;
+                        N = int.Parse(splitCommand[3]);
+                        UpdateFactor(ref a, N, DeckSize);
+                        UpdateFactor(ref c, 0, DeckSize);
                         break;
                     default:
                         // cut N
-                        var cut = int.Parse(splitCommand[1]);
-                        currPos = (DeckSize + currPos + cut) % DeckSize;
+                        N = int.Parse(splitCommand[1]);
+                        UpdateFactor(ref a, 1, DeckSize);
+                        UpdateFactor(ref c, -N, DeckSize);
                         break;
                 }
             }
 
-            return currPos;
+            // Part B
+            return ((a * PositionToCheck) + c) % DeckSize;
         }
 
-        private long SolveReverse(string input)
+        private void UpdateFactor(ref long factor, long delta, long modulus)
         {
-            // Starting with a factory order deck, run the commands in reverse, remembering ONLY what's in position 'positionToCheck'.
+            factor = (factor + delta) % modulus;
+            if (factor < 0)
+            {
+                factor += modulus;
+            }
+        }
+
+        private long SolveBackwards(string input)
+        {
+            // Starting with a factory order deck, run the commands Backwards, remembering ONLY what's in position 'positionToCheck'.
             long currPos = PositionToCheck;
             var commands = Parser.TokenizeLines(input);
 
@@ -316,7 +352,7 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
             var commands = Parser.TokenizeLines(input);
             if (IsPartB)
             {
-                commands.Reverse();
+                //commands.Reverse();
             }
 
             foreach (var command in commands)
@@ -346,12 +382,19 @@ After shuffling your factory order deck of 10007 cards, what is the position of 
         public long SolveForwards(string input, bool IsPartB = false)
         {
             var deck = SolveForwardsFull(input, IsPartB);
-            return FindCardPosition(deck, CardToCheck);
+            if (!IsPartB)
+            {
+                return FindCardPosition(deck, CardToCheck);
+            }
+            else
+            {
+                return deck[PositionToCheck];
+            }
         }
 
         private long FindCardPosition(long[] deck, long cardToCheck)
         {
-            for(int i = 0; i < this.DeckSize; i++)
+            for (int i = 0; i < this.DeckSize; i++)
             {
                 if (deck[i] == cardToCheck) return i;
             }
