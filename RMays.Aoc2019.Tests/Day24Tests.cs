@@ -13,7 +13,7 @@ namespace RMays.Aoc2019.Tests
     {
         private string inputData = InputData.Day24;
         private string knownOutputA = "3186366";
-        private string knownOutputB = "456";
+        private string knownOutputB = "2031";
 
         private IDay<long> GetDayObject()
         {
@@ -34,11 +34,15 @@ namespace RMays.Aoc2019.Tests
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
-        public void PartBTests(string input, int expectedOutput)
+        [TestCase(@"....#
+#..#.
+#..##
+..#..
+#....", 10, 99)]
+        public void PartBTest_Example(string input, int minutes, int expectedOutput)
         {
-            var day = GetDayObject();
-            var result = day.Solve(input, true);
+            var day = new Day24();
+            var result = day.Solve_PartB(input, minutes);
             Assert.AreEqual(expectedOutput, result);
         }
 
