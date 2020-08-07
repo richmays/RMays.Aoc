@@ -13,7 +13,10 @@ namespace RMays.Aoc2019.Tests
     {
         private string inputData = InputData.Day22;
         private string knownOutputA = "3324";
-        private string knownOutputB = "456";
+
+        // Found by running code from here: https:/ /gist.github.com/romkatv/8ef7ea27ddce1de7b1b6f9b5a41838c4#file-day-22-2-cc
+        // and running it here: http:/ /cpp.sh/
+        private string knownOutputB = "74132511136410"; 
 
         private IDay<long> GetDayObject(long deckSize)
         {
