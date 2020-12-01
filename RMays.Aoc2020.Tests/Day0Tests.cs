@@ -22,7 +22,7 @@ namespace RMays.Aoc2020.Tests
 
         [Test]
         [TestCase(@"1, 2, 3", 123)]
-        public void PartATests(string input, int expectedOutput)
+        public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
             var result = day.Solve(input);
@@ -31,7 +31,7 @@ namespace RMays.Aoc2020.Tests
 
         [Test]
         [TestCase(@"4, 5, 6", 456)]
-        public void PartBTests(string input, int expectedOutput)
+        public void PartBTests(string input, long expectedOutput)
         {
             var day = GetDayObject();
             var result = day.Solve(input, true);

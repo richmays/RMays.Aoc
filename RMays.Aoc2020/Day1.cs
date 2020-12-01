@@ -41,29 +41,27 @@ Of course, your expense report is much larger. Find the two entries that sum to 
     {
         public long Solve(string input, bool IsPartB = false)
         {
-            if (!IsPartB)
+            if (IsPartB)
             {
-                List<string> itemsStr = Parser.TokenizeLines(input);
-                List<int> items = new List<int>();
-                foreach(var item in itemsStr)
-                {
-                    int newItem = int.Parse(item);
-                    if (items.Contains(2020 - newItem))
-                    {
-                        return newItem * (2020 - newItem);
-                    }
-                    items.Add(newItem);
-                }
-
-
-                
+                return DoPartB(input);
             }
 
-            return doB(input);
+            List<string> itemsStr = Parser.TokenizeLines(input);
+            List<int> items = new List<int>();
+            foreach(var item in itemsStr)
+            {
+                int newItem = int.Parse(item);
+                if (items.Contains(2020 - newItem))
+                {
+                    return newItem * (2020 - newItem);
+                }
+                items.Add(newItem);
+            }
 
+            return -1;
         }
 
-        private long doB(string input)
+        private long DoPartB(string input)
         {
             List<string> itemsStr = Parser.TokenizeLines(input);
             List<long> items = new List<long>();
@@ -72,15 +70,10 @@ Of course, your expense report is much larger. Find the two entries that sum to 
                 int newItem = int.Parse(item);
                 foreach (var item1 in items)
                 {
-                    foreach (var item2 in items)
+                    if (items.Contains(2020-item1-newItem))
                     {
-                        if (item1 + item2 + newItem == 2020)
-                        {
-
-                            return item1 * item2 * newItem;
-                        }
-//                        if (item1 + item2 + item)
-                 }
+                        return item1 * (2020-item1-newItem) * newItem;
+                    }
                 }
 
                 items.Add(newItem);
