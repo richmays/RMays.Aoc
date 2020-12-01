@@ -12,13 +12,42 @@ namespace RMays.Aoc2020.Tests
     public class Day1Tests
     {
         private string inputData = InputData.Day1;
-        private string knownOutputA = "605364"; // i got it in about 4 1/2 minutes
-        private string knownOutputB = "128397680"; // 13 minutes.  algorithm was brute force. oh well
+        private string knownOutputA = "605364";
+        private string knownOutputB = "128397680";
 
         private IDay<long> GetDayObject()
         {
             return new Day1();
         }
+
+        [Test]
+        [TestCase(@"1721
+979
+366
+299
+675
+1456", 514579)]
+        public void PartATests(string input, long expectedOutput)
+        {
+            var day = GetDayObject();
+            var result = day.Solve(input);
+            Assert.AreEqual(expectedOutput, result);
+        }
+
+        [Test]
+        [TestCase(@"1721
+979
+366
+299
+675
+1456", 241861950)]
+        public void PartBTests(string input, long expectedOutput)
+        {
+            var day = GetDayObject();
+            var result = day.Solve(input, true);
+            Assert.AreEqual(expectedOutput, result);
+        }
+
 
         [Test]
         public void DoItA() // ?
