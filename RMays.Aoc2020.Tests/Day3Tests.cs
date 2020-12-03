@@ -11,6 +11,9 @@ namespace RMays.Aoc2020.Tests
     [TestFixture]
     public class Day3Tests
     {
+        // Official final times (after a delay):
+        // part 1:   18m21.61s
+        // part 1+2: 21m49.83s
         private string inputData = InputData.Day3;
         private string knownOutputA = "198";
         private string knownOutputB = "5140884672";
