@@ -87,7 +87,7 @@ You can also [Share] this puzzle.
         {
             List<int> IDs = new List<int>();
             var lines = Parser.TokenizeLines(input);
-            var maxPass = 0;
+            //var maxPass = 0;
             foreach (var line in lines)
             {
                 var pass = GetSeatValue(line);
@@ -120,9 +120,9 @@ You can also [Share] this puzzle.
         /// <returns></returns>
         public string GetSeatValue(string input)
         {
-            int row = 0;
-            int col = 0;
-            int seat = 0;
+            //int row = 0;
+            //int col = 0;
+            //int seat = 0;
 
             var currRow = new SeatRange { Min = 0, Max = 127 };
             for (int i = 0; i < 7; i++)
