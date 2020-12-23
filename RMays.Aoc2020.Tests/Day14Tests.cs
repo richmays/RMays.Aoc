@@ -9,23 +9,26 @@ using System.Threading.Tasks;
 namespace RMays.Aoc2020.Tests
 {
     [TestFixture]
-    public class Day0Tests
+    public class Day14Tests
     {
-        // Final times:
-        // part 1:   XXmXX.XXs
-        // part 1+2: XXmXX.XXs
+        // Official final times (after taking an overnight break during part 2)
+        // part 1:   about 20 minutes, maybe.  not sure.
+        // part 1+2: overnight.  got it pretty fast after i started again the next day.
 
-        private string inputData = InputData.Day0;
-        private string knownOutputA = "123";
+        private string inputData = InputData.Day14;
+        private string knownOutputA = "9967721333886";
         private string knownOutputB = "456";
 
         private IDay<long> GetDayObject()
         {
-            return new Day0();
+            return new Day14();
         }
 
         [Test]
-        [TestCase(@"1, 2, 3", 123)]
+        [TestCase(@"mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0", 165)]
         public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
@@ -34,7 +37,10 @@ namespace RMays.Aoc2020.Tests
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
+        [TestCase(@"mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1", 208)]
         public void PartBTests(string input, long expectedOutput)
         {
             var day = GetDayObject();
