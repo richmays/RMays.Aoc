@@ -18,9 +18,10 @@ namespace RMays.Aoc2020
     {
         public long Solve(string input, bool IsPartB = false)
         {
-            if (!IsPartB)
+            var lines = Parser.TokenizeLines(input);
+            foreach(var line in lines)
             {
-                return 123;
+
             }
 
             return 456;
