@@ -14,7 +14,7 @@ namespace RMays.Aoc2020
     */
     #endregion
 
-    public class Day0 : IDay<long>
+    public class Day15 : IDay<long>
     {
         public long Solve(string input, bool IsPartB = false)
         {
