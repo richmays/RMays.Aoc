@@ -9571,7 +9571,7 @@ mem[47927] = 513748
 mem[13838] = 385";
         #endregion
         #region Day15
-        public const string Day15 = @"";
+        public const string Day15 = @"15,5,1,4,7,0";
         #endregion
         #region Day16
         public const string Day16 = @"departure location: 45-422 or 444-950
