@@ -12,12 +12,12 @@ namespace RMays.Aoc2020.Tests
     public class Day15Tests
     {
         // Final times:
-        // part 1:   XXmXX.XXs
-        // part 1+2: XXmXX.XXs
+        // part 1:   XXmXX.XXs (didn't time it, but it took less than an hour.)
+        // part 1+2: XXmXX.XXs (Each run / test took 9 seconds.  I didn't optimize yet.)
 
         private string inputData = InputData.Day15;
-        private string knownOutputA = "123";
-        private string knownOutputB = "456";
+        private string knownOutputA = "1259";
+        private string knownOutputB = "689";
 
         private IDay<long> GetDayObject()
         {
@@ -25,7 +25,13 @@ namespace RMays.Aoc2020.Tests
         }
 
         [Test]
-        [TestCase(@"1, 2, 3", 123)]
+        [TestCase(@"0,3,6", 436)]
+        [TestCase(@"1,3,2", 1)]
+        [TestCase(@"2,1,3", 10)]
+        [TestCase(@"1,2,3", 27)]
+        [TestCase(@"2,3,1", 78)]
+        [TestCase(@"3,2,1", 438)]
+        [TestCase(@"3,1,2", 1836)]
         public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
@@ -34,7 +40,13 @@ namespace RMays.Aoc2020.Tests
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
+        [TestCase(@"0,3,6", 175594)]
+        [TestCase(@"1,3,2", 2578)]
+        [TestCase(@"2,1,3", 3544142)]
+        [TestCase(@"1,2,3", 261214)]
+        [TestCase(@"2,3,1", 6895259)]
+        [TestCase(@"3,2,1", 18)]
+        [TestCase(@"3,1,2", 362)]
         public void PartBTests(string input, long expectedOutput)
         {
             var day = GetDayObject();
