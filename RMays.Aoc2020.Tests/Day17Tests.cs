@@ -12,12 +12,12 @@ namespace RMays.Aoc2020.Tests
     public class Day17Tests
     {
         // Final times:
-        // part 1:   XXmXX.XXs
-        // part 1+2: XXmXX.XXs
+        // part 1:   XXmXX.XXs (92ms runtime)
+        // part 1+2: XXmXX.XXs (3.5s runtime; pretty slow.)
 
         private string inputData = InputData.Day17;
-        private string knownOutputA = "123";
-        private string knownOutputB = "456";
+        private string knownOutputA = "215";
+        private string knownOutputB = "1728";
 
         private IDay<long> GetDayObject()
         {
@@ -25,7 +25,9 @@ namespace RMays.Aoc2020.Tests
         }
 
         [Test]
-        [TestCase(@"1, 2, 3", 123)]
+        [TestCase(@".#.
+..#
+###", 112)]
         public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
@@ -34,10 +36,12 @@ namespace RMays.Aoc2020.Tests
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
+        [TestCase(@".#.
+..#
+###", 848)]
         public void PartBTests(string input, long expectedOutput)
         {
-            var day = GetDayObject();
+            var day = new Day17b();
             var result = day.Solve(input, true);
             Assert.AreEqual(expectedOutput, result);
         }
@@ -52,7 +56,7 @@ namespace RMays.Aoc2020.Tests
         [Test]
         public void DoItB() // ?
         {
-            var day = GetDayObject();
+            var day = new Day17b();
             Console.WriteLine(day.Solve(inputData, true));
         }
 
@@ -67,7 +71,7 @@ namespace RMays.Aoc2020.Tests
         [Test]
         public void DoItB_Answer()
         {
-            var day = GetDayObject();
+            var day = new Day17b();
             var result = day.Solve(inputData, true);
             Assert.AreEqual(knownOutputB, result.ToString());
         }
