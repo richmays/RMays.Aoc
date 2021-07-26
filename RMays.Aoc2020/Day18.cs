@@ -33,16 +33,18 @@ namespace RMays.Aoc2020
         {
             // Get a list of tokens.  This will make it easier to evaluate the line.
             var myStack = new Stack<string>();
-            List<char> opsToProcess = new List<char> { '+', '*' }; 
-            /*
-            if (!IsPartB)
+            List<char> opsToProcess = new List<char> { '+', '*' };
+            if (IsPartB)
             {
-                opsToProcess = new List<char> { '+', '*' };
+                if (tokens.Contains("+"))
+                {
+                    opsToProcess = new List<char> { '+' };
+                }
+                else
+                {
+                    opsToProcess = new List<char> { '*' };
+                }
             }
-            else
-            {
-            }
-            */
 
             // We want to push open-parentheses, operators, and numbers onto the stack.
             foreach (var token in tokens)
@@ -81,7 +83,50 @@ namespace RMays.Aoc2020
 
             if (myStack.Count() != 1)
             {
-                throw new ApplicationException("Expected the stack to have exactly one element, but it had " + myStack.Count() + ".");
+                var newTokens = new List<string>();
+                while(myStack.Any())
+                {
+                    newTokens.Insert(0, myStack.Pop());
+                }
+
+                // Let's resolve what's inside parentheses.
+                var foundChange = false;
+                while (newTokens.Contains("(") || foundChange)
+                {
+                    foundChange = false;
+                    var startParam = -1;
+                    for (int i = 0; i < newTokens.Count; i++)
+                    {
+                        if (newTokens[i] == "(")
+                        {
+                            startParam = i;
+                        }
+                        else if (newTokens[i] == ")")
+                        {
+                            // Replace the inner parentheses with a single number.
+                            // Get the source...
+                            var parenTokens = new List<string>();
+                            for (int j = startParam + 1; j < i; j++)
+                            {
+                                parenTokens.Add((string)newTokens[j].Clone());
+                            }
+
+                            // Replace the inner-parens with a single number.
+                            var innerResult = Eval(parenTokens, IsPartB);
+                            for(int j = i; j >= startParam; j--)
+                            {
+                                newTokens.RemoveAt(startParam);
+                            }
+
+                            newTokens.Insert(startParam, innerResult.ToString());
+
+                            // Jump out; simplify from the beginning.
+                            return Eval(newTokens, IsPartB);
+                        }
+                    }
+                }
+
+                return Eval(newTokens, IsPartB);
             }
 
             return long.Parse(myStack.Pop());
@@ -93,18 +138,31 @@ namespace RMays.Aoc2020
             {
                 // Process the operation, and push the result.
                 var op = myStack.Pop();
-                var prevNumber = long.Parse(myStack.Pop());
-                if (op == "+")
+                var prevNumberOrParen = myStack.Pop();
+                if (prevNumberOrParen == ")")
                 {
-                    myStack.Push($"{prevNumber + long.Parse(token)}");
-                }
-                else if (op == "*")
-                {
-                    myStack.Push($"{prevNumber * long.Parse(token)}");
+                    // Can't do anything yet; it's a closed-parentheses before this op and number.
+                    // Jump out after pushing.
+                    myStack.Push(prevNumberOrParen);
+                    myStack.Push(op);
+                    myStack.Push(token);
                 }
                 else
                 {
-                    throw new ApplicationException("Invalid operation: " + op);
+                    // We found a number; reduce if we can.
+                    var prevNumber = long.Parse(prevNumberOrParen);
+                    if (op == "+")
+                    {
+                        myStack.Push($"{prevNumber + long.Parse(token)}");
+                    }
+                    else if (op == "*")
+                    {
+                        myStack.Push($"{prevNumber * long.Parse(token)}");
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Invalid operation: " + op);
+                    }
                 }
             }
             else
