@@ -19,6 +19,11 @@ namespace RMays.Aoc2020
     {
         public long Solve(string input, bool IsPartB = false)
         {
+            // Part B:  Replace these rules:
+            //
+            // 8: 42 | 42 8
+            // 11: 42 31 | 42 11 31
+
             // Can we build up a regex of rules?  That might be too easy.  Let's try it anyway.
             // Input has 2 sections.
             var lines = Parser.TokenizeLines(input);
@@ -33,7 +38,11 @@ namespace RMays.Aoc2020
                 if (line[0] == 'a' || line[0] == 'b')
                 {
                     // Found a message
-                    messages.Add(line);
+                    var message = line.Split('|')[0];
+                    //if (line.EndsWith("|1"))
+                    {
+                        messages.Add(message);
+                    }
                 }
                 else
                 {
@@ -45,7 +54,7 @@ namespace RMays.Aoc2020
             }
 
             var matches = 0;
-            var pattern = GetPattern(rules);
+            var pattern = GetPattern(rules, IsPartB);
 
             foreach(var message in messages)
             {
@@ -59,7 +68,7 @@ namespace RMays.Aoc2020
             return matches;
         }
 
-        private string GetPattern(List<Rule> rules)
+        private string GetPattern(List<Rule> rules, bool IsPartB)
         {
             var pattern = "^[0]$";
 
@@ -70,9 +79,31 @@ namespace RMays.Aoc2020
                 var endRuleId = pattern.IndexOf(']', startRuleId);
                 var ruleId = int.Parse(pattern.Substring(startRuleId + 1, endRuleId - startRuleId - 1));
 
-                pattern = pattern.Replace($"[{ruleId}]", rules.First(x => x.RuleId == ruleId).InnerReplace());
-                //Console.WriteLine(pattern);
+                // 8: 42 | 42 8
+                // 11: 42 31 | 42 11 31
+
+                // 8: (42)+
+                // 11: (42 31)+
+
+                var replaceTarget = "";
+                if (IsPartB && ruleId == 8)
+                {
+                    replaceTarget = "([42])+";
+                }
+                else if (IsPartB && ruleId == 11)
+                {
+                    // Regex for:  ((xy)|(xxyy)|(xxxyyy)|(xxxxyyyy))
+                    replaceTarget = "(([42][31])|([42][42][31][31])|([42][42][42][31][31][31])|([42][42][42][42][31][31][31][31]))";
+                }
+                else
+                {
+                    replaceTarget = rules.First(x => x.RuleId == ruleId).InnerReplace();
+                }
+                pattern = pattern.Replace($"[{ruleId}]", replaceTarget);
+                int q = 999;
             }
+
+            //Console.WriteLine(pattern);
 
             return pattern;
             //return "^a((aa|bb)(ab|ba)|(ab|ba)(aa|bb))b$";
@@ -123,15 +154,26 @@ namespace RMays.Aoc2020
                 var result = "";
                 foreach (var option in this.Options)
                 {
-                    result += "|";
+                    result += "|(";
                     foreach(var suboption in option)
                     {
                         result += $"[{suboption}]";
                     }
+                    result += ")";
                 }
                 if (result.Length > 0)
                 {
-                    result = "(" + result.Substring(1) + ")";
+                    result = result.Substring(1);
+                }
+
+                if (this.Options.Count == 1)
+                {
+                    // Remove the first and last parentheses.
+                    result = result.Substring(1, result.Length - 2);
+                }
+                else if (this.Options.Count > 1)
+                {
+                    result = "(" + result + ")";
                 }
 
                 if (Leaf != null)
