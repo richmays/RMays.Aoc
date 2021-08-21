@@ -27,7 +27,7 @@ namespace RMays.Aoc2020
             // Can we build up a regex of rules?  That might be too easy.  Let's try it anyway.
             // Input has 2 sections.
             var lines = Parser.TokenizeLines(input);
-            var inTopSection = true;
+            //var inTopSection = true;
 
             var rules = new List<Rule>();
             var messages = new List<string>();
@@ -100,7 +100,7 @@ namespace RMays.Aoc2020
                     replaceTarget = rules.First(x => x.RuleId == ruleId).InnerReplace();
                 }
                 pattern = pattern.Replace($"[{ruleId}]", replaceTarget);
-                int q = 999;
+                //int q = 999;
             }
 
             //Console.WriteLine(pattern);
