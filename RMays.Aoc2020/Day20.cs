@@ -16,8 +16,18 @@ namespace RMays.Aoc2020
 
     public class Day20 : IDay<long>
     {
+        string puzzleWithoutGaps;
+
         public long Solve(string input, bool IsPartB = false)
         {
+            var Tiles = ReadInput(input);
+
+            // NOW, do the solve.
+            return DoThePuzzle(Tiles);
+        }
+
+        public List<Tile> ReadInput(string input)
+        { 
             // Let's try brute forcing it; it might be fast enough.
             // There's 8 valid combinations.
 
@@ -48,8 +58,7 @@ namespace RMays.Aoc2020
                 Tiles.Add(new Tile(currTileId, currTileData));
             }
 
-            // NOW, do the solve.
-            return DoThePuzzle(Tiles);
+            return Tiles;
         }
 
         private long DoThePuzzle(List<Tile> Tiles)
@@ -72,6 +81,7 @@ namespace RMays.Aoc2020
             var TilesAvailable = new List<Tile>();
             TilesAvailable.AddRange(Tiles);
 
+            var FinalPuzzle = new Tile[puzzleSide, puzzleSide];
             long MagicNumber;
 
             // Ugly, but it should work.
@@ -82,7 +92,7 @@ namespace RMays.Aoc2020
                 {
                     Puzzle[0, 0] = (Tile)tile.Clone();
                     TilesAvailable = Tiles.Where(x => x.TileId != tile.TileId).ToList();
-                    var result = CanPlaceAPiece(Puzzle, TilesAvailable, puzzleSide, out MagicNumber);
+                    var result = CanPlaceAPiece(Puzzle, TilesAvailable, puzzleSide, out MagicNumber, out FinalPuzzle);
 
                     if (result)
                     {
@@ -96,9 +106,22 @@ namespace RMays.Aoc2020
             throw new ApplicationException("The puzzle is impossible!");
         }
 
-        private bool CanPlaceAPiece(Tile[,] Puzzle, List<Tile> TilesAvailable, int puzzleSide, out long MagicNumber)
+        public string RemoveGaps(string puzzleInput)
+        {
+            Solve(puzzleInput);
+            return this.puzzleWithoutGaps;
+        }
+
+        public string GetFirstTile(string puzzleInput)
+        {
+            var tiles = this.ReadInput(puzzleInput);
+            return tiles[0].PrintTile();
+        }
+
+        private bool CanPlaceAPiece(Tile[,] Puzzle, List<Tile> TilesAvailable, int puzzleSide, out long MagicNumber, out Tile[,] FinalPuzzle)
         {
             MagicNumber = -1;
+            FinalPuzzle = null;
 
             // Go through every tile in TilesAvailable, and try putting one in the first available spot (first by Row, then by Col).
             // Skip tiles that can't be placed there.
@@ -138,10 +161,12 @@ namespace RMays.Aoc2020
                     if (newTilesAvailable.Count == 0)
                     {
                         // We added all pieces!  Let's return the final solution.
+                        Puzzle[row, col] = (Tile)tile.Clone();
                         MagicNumber = (long)Puzzle[0, 0].TileId
                             * (long)Puzzle[puzzleSide - 1, 0].TileId
-                            * (long)tile.TileId // Puzzle[puzzleSide - 1, puzzleSide - 1].TileId 
+                            * (long)Puzzle[puzzleSide - 1, puzzleSide - 1].TileId 
                             * (long)Puzzle[0, puzzleSide - 1].TileId;
+                        FinalPuzzle = Puzzle;
                         return true;
                     }
 
@@ -157,11 +182,14 @@ namespace RMays.Aoc2020
                         }
                     }
                     newPuzzle[row, col] = (Tile)tile.Clone();
+                    Tile[,] newFinalPuzzle;
 
-                    var result = CanPlaceAPiece(newPuzzle, newTilesAvailable, puzzleSide, out long newMagicNumber);
+                    var result = CanPlaceAPiece(newPuzzle, newTilesAvailable, puzzleSide, out long newMagicNumber, out newFinalPuzzle);
                     if (result)
                     {
                         MagicNumber = newMagicNumber;
+                        FinalPuzzle = newFinalPuzzle;
+                        this.puzzleWithoutGaps = "!";
                         return true;
                     }
 
@@ -256,7 +284,7 @@ namespace RMays.Aoc2020
         /// <summary>
         /// Represents a tile (or, specifically, the outside border).
         /// </summary>
-        internal class Tile : ICloneable
+        public class Tile : ICloneable
         {
             // Sides' is an array of 4 integers for the 4 sides, representing the 'value' of the side.
             // (The sides are represented as a binary number from 0 to 1023.)
@@ -277,7 +305,7 @@ namespace RMays.Aoc2020
             public Tile(int tileId, string tileInfo)
             {
                 TileId = tileId;
-                _tileInfo = tileInfo;
+                _tileInfo = tileInfo.Replace("\r\n", "!").Replace("\n", "!").Replace("!", "\r\n");
 
                 // Sides are read clockwise; top side first.
                 int iSide0 = GetSideFromString(tileInfo.Split('\n')[0].Trim());
@@ -404,7 +432,7 @@ namespace RMays.Aoc2020
                 return newTile;
             }
 
-            public string PrintTile()
+            public string PrintShortTile()
             {
                 var top = BinToStr(this.Sides[0]);
                 var left = GetInverse(this.Sides[3]);
@@ -425,6 +453,12 @@ namespace RMays.Aoc2020
                 var bottom = BinToStr(GetInverse(this.Sides[2]));
                 result += bottom + Environment.NewLine;
                 return result;
+            }
+
+            public string PrintTile()
+            {
+                // NOTE: Doesn't handle rotations or flips.
+                return this._tileInfo;
             }
 
             public string BinToStr(int value)
