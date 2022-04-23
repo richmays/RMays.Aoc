@@ -5548,6 +5548,31 @@ gcebadf ed bafce bgcfad daefb bfadg aefbgd fgcdeb daeg ebd | cdgfba ecbfdg edbaf
 8718312138
 5254266347";
         #endregion
-
+        #region Day12
+        public const string Day12 = @"yb-pi
+jg-ej
+yb-KN
+LD-start
+end-UF
+UF-yb
+yb-xd
+qx-yb
+xd-end
+jg-KN
+start-qx
+start-ej
+qx-LD
+jg-LD
+xd-LD
+ej-qx
+end-KN
+DM-xd
+jg-yb
+ej-LD
+qx-UF
+UF-jg
+qx-jg
+xd-UF";
+        #endregion
     }
 }
