@@ -75,6 +75,44 @@ namespace RMays.Aoc2021
             while (madeFix)
             {
                 madeFix = false;
+
+                /*
+                 * DoItB: 25.2s
+                 * 
+                // Start with 1 to skip [0,0].
+                for(var sumRowCal = 1; sumRowCal <= rows + cols; sumRowCal++)
+                {
+                    for(var row = Math.Max(0, sumRowCal - rows); row <= Math.Min(rows - 1, sumRowCal); row++)
+                    {
+                        var col = sumRowCal - row;
+                        if (col >= cols) continue;
+
+                        var smallestAdj = shortest[row, col];
+                        if (row > 0)
+                        {
+                            smallestAdj = Math.Min(smallestAdj, shortest[row - 1, col]);
+                        }
+                        if (col > 0)
+                        {
+                            smallestAdj = Math.Min(smallestAdj, shortest[row, col - 1]);
+                        }
+                        if (row < rows - 1)
+                        {
+                            smallestAdj = Math.Min(smallestAdj, shortest[row + 1, col]);
+                        }
+                        if (col < cols - 1)
+                        {
+                            smallestAdj = Math.Min(smallestAdj, shortest[row, col + 1]);
+                        }
+                        if (smallestAdj + grid[row, col] != shortest[row, col])
+                        {
+                            madeFix = true;
+                            shortest[row, col] = smallestAdj + grid[row, col];
+                        }
+                    }
+                }
+                */
+                // Old way (22.2s)
                 for (var row = 0; row < rows; row++)
                 {
                     for (var col = 0; col < cols; col++)

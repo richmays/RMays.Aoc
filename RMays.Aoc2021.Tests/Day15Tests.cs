@@ -45,6 +45,11 @@ namespace RMays.Aoc2021.Tests
 9999111199
 9999999119
 9999999911", 20)]
+        [TestCase(@"12345
+12345
+12345
+12345
+12345", 18)]
         public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
@@ -63,6 +68,11 @@ namespace RMays.Aoc2021.Tests
 3125421639
 1293138521
 2311944581", 315)]
+        [TestCase(@"12345
+12345
+12345
+12345
+12345", 162)]
         public void PartBTests(string input, long expectedOutput)
         {
             var day = GetDayObject();
