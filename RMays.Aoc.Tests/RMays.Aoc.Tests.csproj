@@ -51,6 +51,8 @@
     <Compile Include="DataPredictorTests.cs" />
     <Compile Include="ModularMathHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BinaryTreeTests.cs" />
+    <Compile Include="RBTreeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
