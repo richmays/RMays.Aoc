@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4149B5E0-4B55-48DC-8372-09A2871E40EE}</ProjectGuid>
+    <ProjectGuid>{59B2DFA9-0759-4C1C-B1CC-082CF0543434}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Rmays.Aoc</RootNamespace>
-    <AssemblyName>Rmays.Aoc</AssemblyName>
+    <RootNamespace>RMays.Aoc2022</RootNamespace>
+    <AssemblyName>RMays.Aoc2022</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -33,7 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,13 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryTree.cs" />
-    <Compile Include="Coords.cs" />
-    <Compile Include="DataPredictor.cs" />
-    <Compile Include="IDay.cs" />
-    <Compile Include="ModularMathHelper.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Day0.cs" />
+    <Compile Include="DayBase.cs" />
+    <Compile Include="InputData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Rmays.Aoc\RMays.Aoc.csproj">
+      <Project>{4149b5e0-4b55-48dc-8372-09a2871e40ee}</Project>
+      <Name>RMays.Aoc</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

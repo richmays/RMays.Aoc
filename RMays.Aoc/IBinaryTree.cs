@@ -6,34 +6,33 @@ using System.Threading.Tasks;
 
 namespace Rmays.Aoc
 {
-    public interface IBinaryTree
+    public interface IBinaryTree<T> where T : IComparable<T>
     {
         /// <summary>
-        /// Inserts the given number into the binary tree.
+        /// Inserts the given value into the binary tree.
         /// </summary>
-        /// <param name="newData">The number to insert.</param>
-        /// <returns>Did this operation succeed?  ('False' means a duplicate was found.)</returns>
-        bool Insert(long newData);
+        /// <param name="newData">The value to insert.</param>
+        void Insert(T newData);
 
         /// <summary>
-        /// Remove the given number from the binary tree.
+        /// Remove the given value from the binary tree.
         /// </summary>
-        /// <param name="findData">The number to find; if it's found, remove it</param>
+        /// <param name="findData">The value to find; if it's found, remove it</param>
         /// <returns>Did this operation succeed?  ('False' means it wasn't found.)</returns>
-        bool Remove(long findData);
+        bool Remove(T findData);
 
         /// <summary>
-        /// Returns whether or not the number exists in the binary tree.
+        /// Returns whether or not the value exists in the binary tree.
         /// </summary>
-        /// <param name="findData">The number to find.</param>
-        /// <returns>True if the number is in the tree, False otherwise.</returns>
-        bool Exists(long findData);
+        /// <param name="findData">The value to find.</param>
+        /// <returns>True if the value is in the tree, False otherwise.</returns>
+        bool Exists(T findData);
 
         /// <summary>
-        /// Returns the node that contains the given number, or null if the number wasn't found.
+        /// Returns the node that contains the given value, or null if the value wasn't found.
         /// </summary>
-        /// <param name="findData">The number to find.</param>
-        /// <returns>The node containing the number, or null if the number wasn't found.</returns>
-        BinaryNode Find(long findData);
+        /// <param name="findData">The value to find.</param>
+        /// <returns>The node containing the value, or null if the value wasn't found.</returns>
+        BinaryNode<T> Find(T findData);
     }
 }

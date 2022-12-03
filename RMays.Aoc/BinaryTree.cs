@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Rmays.Aoc
 {
-    public class BinaryTree : IBinaryTree
+    public class BinaryTree<T> where T : IComparable
     {
-        public BinaryNode Root { get; set; }
+        public BinaryNode<T> Root { get; set; }
 
-        public virtual bool Insert(long newValue)
+        public virtual void Insert(T newValue)
         {
-            var nodeToAdd = new BinaryNode
+            var nodeToAdd = new BinaryNode<T>
             {
                 Data = newValue
             };
@@ -20,7 +20,7 @@ namespace Rmays.Aoc
             if (Root == null)
             {
                 Root = nodeToAdd;
-                return true;
+                return;
             }
 
             var prev = Root;
@@ -28,46 +28,132 @@ namespace Rmays.Aoc
             while (curr != null)
             {
                 prev = curr;
-                if (curr.Data > newValue)
+                if (newValue.CompareTo(curr.Data) < 0)
                 {
                     curr = curr.Left;
                 }
-                else if (curr.Data < newValue)
-                {
-                    curr = curr.Right;
-                }
                 else
                 {
-                    // Duplicate!  Can't insert.
-                    return false;
+                    curr = curr.Right;
                 }
             }
 
             // Curr is null, Prev is where we need to add the item.
-            if (prev.Data > newValue)
+            if (newValue.CompareTo(curr.Data) < 0)
             {
                 prev.Left = nodeToAdd;
             }
-            else if (prev.Data < newValue)
+            else
             {
                 prev.Right = nodeToAdd;
             }
-
-            return true;
         }
 
-        public virtual bool Remove(long findData)
+        /// <summary>
+        /// Remove a node from the given subtree.
+        /// The node to find has the given value.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="findValue"></param>
+        /// <returns>The root of the subtree after the 'RemoveNode' operation is done.</returns>
+        private (BinaryNode<T>, bool) RemoveNode(BinaryNode<T> root, T findValue)
         {
-            return false;
+            if (root == null)
+            {
+                return (root, false);
+            }
+
+            if (findValue.CompareTo(root.Data) < 0)
+            {
+                var result = RemoveNode(root.Left, findValue);
+                root.Left = result.Item1;
+                return (root, result.Item2);
+            }
+            else if (findValue.CompareTo(root.Data) > 0)
+            {
+                var result = RemoveNode(root.Right, findValue);
+                root.Right = result.Item1;
+                return (root, result.Item2);
+            }
+
+            if (root.Left == null && root.Right == null)
+            {
+                // Removing the root
+                return (null, true);
+            }
+            else if (root.Left == null && root.Right != null)
+            {
+                // Remove the root, and promote the Right.
+                return (root.Right, true);
+            }
+            else if (root.Left != null && root.Right == null)
+            {
+                // Remove the root, and promote the Left.
+                return (root.Left, true);
+            }
+            else
+            {
+                // Node has 2 children.
+                T maxValue = GetMaxValue(root.Left);
+                root.Data = maxValue;
+                var result = RemoveNode(root.Left, maxValue);
+                root.Left = result.Item1;
+                return (root, result.Item2);
+            }
         }
 
-        public virtual bool Exists(long findValue)
+        private T GetMaxValue(BinaryNode<T> root)
         {
-            return false;
+            if (root.Right != null)
+            {
+                return GetMaxValue(root.Right);
+            }
+
+            return root.Data;
         }
 
-        public BinaryNode Find(long findData)
+        public virtual bool Remove(T findValue)
         {
+            var result = RemoveNode(Root, findValue);
+            if (result.Item2)
+            {
+                // We removed something
+                Root = result.Item1;
+            }
+
+            return result.Item2;
+        }
+
+        public virtual bool Exists(T findValue)
+        {
+            return Find(findValue) != null;
+        }
+
+        public BinaryNode<T> Find(T findValue)
+        {
+            // Safety; can't remove anything from an empty tree.
+            if (Root == null) return null;
+
+            var curr = Root;
+            while (curr != null && !curr.Data.Equals(findValue))
+            {
+                if (findValue.CompareTo(curr.Data) < 0)
+                {
+                    curr = curr.Left;
+                }
+                else
+                {
+                    curr = curr.Right;
+                }
+            }
+
+            if (curr == null) return null;
+
+            if (curr.Data.Equals(findValue))
+            {
+                return curr;
+            }
+
             return null;
         }
 
@@ -85,11 +171,11 @@ namespace Rmays.Aoc
 
     }
 
-    public class BinaryNode
+    public class BinaryNode<T> where T : IComparable
     {
-        public BinaryNode Left { get; set; }
-        public BinaryNode Right { get; set; }
-        public long Data { get; set; }
+        public BinaryNode<T> Left { get; set; }
+        public BinaryNode<T> Right { get; set; }
+        public T Data { get; set; }
 
         public string ToLongString()
         {
