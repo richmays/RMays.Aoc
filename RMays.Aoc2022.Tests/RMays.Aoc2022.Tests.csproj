@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Day2Tests.cs" />
+    <Compile Include="Day1Tests.cs" />
+    <Compile Include="Day3Tests.cs" />
     <Compile Include="Day0Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
