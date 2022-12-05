@@ -27,5 +27,11 @@ namespace RMays.Aoc
             // TODO: Fix this so it works for any input string.
             return input.Replace("\r\n", "~").Split(new char[] { '~' }).Select(x => x.Trim()).ToList();
         }
+
+        public static List<string> TokenizeLinesKeepSpaces(string input)
+        {
+            // TODO: Fix this so it works for any input string.
+            return input.Replace("\r\n", "~").Split(new char[] { '~' }).Select(x => x).ToList();
+        }
     }
 }
