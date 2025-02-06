@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RMays.Aoc2022
+namespace RMays.Aoc2023
 {
     #region Day 0
     /*
@@ -16,7 +16,7 @@ namespace RMays.Aoc2022
     */
     #endregion
 
-    public class Day1b : IDay<long>
+    public class Day1 : IDay<long>
     {
         public long Solve(string input, bool IsPartB = false)
         {

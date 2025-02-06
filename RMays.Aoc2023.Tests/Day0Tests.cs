@@ -6,30 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RMays.Aoc2022.Tests
+namespace RMays.Aoc2023.Tests
 {
     [TestFixture]
-    public class Day1bTests
+    public class Day0Tests
     {
         // Final times:
         // part 1:   XXmXX.XXs
         // part 1+2: XXmXX.XXs
-        // Pretty awful; it didn't click.  I was going for Speed.
 
-        private string inputData = InputData.Day1;
-        private string knownOutputA = "54601";
-        private string knownOutputB = "54078";
+        private string inputData = InputData.Day0;
+        private string knownOutputA = "123";
+        private string knownOutputB = "456";
 
         private IDay<long> GetDayObject()
         {
-            return new Day1b();
+            return new Day0();
         }
 
         [Test]
-        [TestCase(@"1abc2
-pqr3stu8vwx
-a1b2c3d4e5f
-treb7uchet", 142)]
+        [TestCase(@"1, 2, 3", 123)]
         public void PartATests(string input, long expectedOutput)
         {
             var day = GetDayObject();
@@ -38,13 +34,7 @@ treb7uchet", 142)]
         }
 
         [Test]
-        [TestCase(@"two1nine
-eightwothree
-abcone2threexyz
-xtwone3four
-4nineeightseven2
-zoneight234
-7pqrstsixteen", 281)]
+        [TestCase(@"4, 5, 6", 456)]
         public void PartBTests(string input, long expectedOutput)
         {
             var day = GetDayObject();
