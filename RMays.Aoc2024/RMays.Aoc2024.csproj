@@ -7,8 +7,8 @@
     <ProjectGuid>{A1CE754B-F589-4514-8642-B729034963CD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RMays.Aoc2023</RootNamespace>
-    <AssemblyName>RMays.Aoc2023</AssemblyName>
+    <RootNamespace>RMays.Aoc2024</RootNamespace>
+    <AssemblyName>RMays.Aoc2024</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
