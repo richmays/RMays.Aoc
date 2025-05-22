@@ -28,6 +28,7 @@ namespace RMays.Aoc2024
                     // Brute force.  Ugh.
                     var hasNoFaults = false;
                     var originalList = line.Split(' ').Select(x => int.Parse(x)).ToList();
+
                     for (int i = 0; i < originalList.Count; i++)
                     {
                         var newList = new List<int>();
@@ -40,14 +41,19 @@ namespace RMays.Aoc2024
                         if (!ReportHasFault(newList))
                         {
                             hasNoFaults = true;
+                            break;
                         }
                     }
 
                     if (hasNoFaults)
                     {
+                        Console.WriteLine("Success: " + string.Join(", ", originalList));
                         safeReports++;
                     }
-
+                    else
+                    {
+                        Console.WriteLine("Fail: " + string.Join(", ", originalList));
+                    }
                 }
             }
 

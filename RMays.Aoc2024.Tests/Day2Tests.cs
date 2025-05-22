@@ -81,5 +81,14 @@ namespace RMays.Aoc2024.Tests
             var result = day.Solve(inputData, true);
             Assert.AreEqual(knownOutputB, result.ToString());
         }
+
+        [Test]
+        [TestCase(@"1 999")]
+        public void PartBFailures(string input)
+        {
+            var day = GetDayObject();
+            var result = day.Solve(input, true);
+            Assert.AreEqual(1, result);
+        }
     }
 }
