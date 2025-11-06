@@ -3,15 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RMays.Aoc2024
 {
-    #region Day 0
+    #region Day 4
     /*
 --- Day 0: Template ---
+    Part B was suuuuuper easy.  I didn't have to rewrite any code; it just worked on the first try.
 
     */
     #endregion
@@ -20,8 +22,14 @@ namespace RMays.Aoc2024
     {
         public long Solve(string input, bool IsPartB = false)
         {
+
             var sum = 0;
             var lines = Parser.TokenizeLines(input);
+
+            if (IsPartB)
+            {
+                return SolvePartB(lines);
+            }
 
             // Horizontal
             Log("Starting horizontal checks");
@@ -73,6 +81,31 @@ namespace RMays.Aoc2024
             }
             sum += GetVerticalXmasesCount(newLinesTL);
             sum += GetVerticalXmasesCount(newLinesTR);
+
+            return sum;
+        }
+
+        private long SolvePartB(List<string> lines)
+        {
+            int sum = 0;
+            for (int r = 1; r < lines.Count - 1; r++)
+            {
+                for (int c = 1; c < lines[0].Length - 1; c++)
+                {
+                    if (lines[r][c] != 'A') continue;
+                    char TL = lines[r - 1][c - 1];
+                    char TR = lines[r - 1][c + 1];
+                    char BL = lines[r + 1][c - 1];
+                    char BR = lines[r + 1][c + 1];
+                    if ((TL == 'M' && BR == 'S') || (TL == 'S' && BR == 'M'))
+                    {
+                        if ((TR == 'M' && BL == 'S') || (TR == 'S' && BL == 'M'))
+                        {
+                            sum++;
+                        }
+                    }
+                }
+            }
 
             return sum;
         }

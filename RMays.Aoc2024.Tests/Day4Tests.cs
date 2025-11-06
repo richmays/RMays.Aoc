@@ -17,7 +17,7 @@ namespace RMays.Aoc2024.Tests
 
         private string inputData = InputData.Day4;
         private string knownOutputA = "2567";
-        private string knownOutputB = "456";
+        private string knownOutputB = "2029";
 
         private IDay<long> GetDayObject()
         {
@@ -68,12 +68,21 @@ X......", "TopRight to BottomLeft", 2)]
         }
 
         [Test]
-        [TestCase(@"4, 5, 6", 456)]
-        public void PartBTests(string input, long expectedOutput)
+        [TestCase(@"MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX", "Default", 9)]
+        public void PartBTests(string input, string testcaseName, long expectedOutput)
         {
             var day = GetDayObject();
             var result = day.Solve(input, true);
-            Assert.AreEqual(expectedOutput, result);
+            Assert.AreEqual(expectedOutput, result, $"Failed test: {testcaseName}");
         }
 
         [Test]
